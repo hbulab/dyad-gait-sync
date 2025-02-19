@@ -25,7 +25,7 @@ from matplotlib.gridspec import GridSpec
 
 
 def make_gait_stats_table(df_dyads, df_individuals):
-    with open("../data/tables/gait_stats.tex", "w") as f:
+    with open("../data/tables/dyads/gait_stats.tex", "w") as f:
         f.write("\\begin{table}\n\n")
         f.write("\\centering\n")
         f.write(
@@ -161,7 +161,7 @@ def make_gait_stats_table(df_dyads, df_individuals):
 
 
 def make_table_gsi_coherence_interaction(df_dyads):
-    with open("../data/tables/gsi_coherence_interaction.tex", "w") as f:
+    with open("../data/tables/dyads/gsi_coherence_interaction.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -289,7 +289,7 @@ def make_table_gsi_coherence_interaction(df_dyads):
 
 
 def make_table_gsi_coherence_contact(df_dyads):
-    with open("../data/tables/gsi_coherence_contact.tex", "w") as f:
+    with open("../data/tables/dyads/gsi_coherence_contact.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -395,7 +395,7 @@ def make_table_gsi_coherence_contact(df_dyads):
 
 def make_tukey_table(df_dyads):
 
-    with open("../data/tables/tukey.tex", "w") as f:
+    with open("../data/tables/dyads/tukey.tex", "w") as f:
 
         all_values_gsi = []
         all_values_coherence = []
@@ -484,7 +484,7 @@ def make_tukey_table(df_dyads):
 
 
 def make_relative_phase_table(df_dyads):
-    with open("../data/tables/relative_phase.tex", "w") as f:
+    with open("../data/tables/dyads/relative_phase.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -527,7 +527,7 @@ def make_relative_phase_table(df_dyads):
 
 
 def make_table_delta_f(df_dyads):
-    with open("../data/tables/delta_f.tex", "w") as f:
+    with open("../data/tables/dyads/delta_f.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -612,7 +612,7 @@ def make_table_delta_f(df_dyads):
 
 
 def make_table_counts(df_dyads):
-    with open("../data/tables/counts_dyads.tex", "w") as f:
+    with open("../data/tables/dyads/counts_dyads.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -693,7 +693,7 @@ def make_ssmd_table(df_dyads, metric, double=False, positive=False):
                     stds[i] ** 2 + stds[j] ** 2
                 )
 
-    with open(f"../data/tables/ssmd_{metric}.tex", "w") as f:
+    with open(f"../data/tables/dyads/ssmd_{metric}.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -757,7 +757,7 @@ def make_dunn_table(df_dyads, metric, double=False, positive=False):
 
     # print(result_dunn)
 
-    with open(f"../data/tables/dunn_{metric}.tex", "w") as f:
+    with open(f"../data/tables/dyads/dunn_{metric}.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -798,7 +798,7 @@ def make_dunn_table(df_dyads, metric, double=False, positive=False):
 
 
 def make_table_pearson_correlation(df_dyads, df_individuals):
-    with open("../data/tables/pearson_correlation.tex", "w") as f:
+    with open("../data/tables/dyads/pearson_correlation.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
@@ -883,8 +883,8 @@ def fit_f(x, a, b):
 
 if __name__ == "__main__":
 
-    df_dyads = pd.read_csv("../data/csv/gait_article_dyads.csv")
-    df_individuals = pd.read_csv("../data/csv/gait_article_individuals.csv")
+    df_dyads = pd.read_csv("../data/csv/gait_data_dyads.csv")
+    df_individuals = pd.read_csv("../data/csv/gait_data_individuals.csv")
 
     # =============================================================================
     # Parameters
@@ -1134,7 +1134,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/gait_stats.pdf")
+    plt.savefig("../data/figures/dyads/gait_stats.pdf")
     plt.close()
 
     # =============================================================================
@@ -1226,7 +1226,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/gait_stats_correlation.pdf")
+    plt.savefig("../data/figures/dyads/gait_stats_correlation.pdf")
     plt.close()
 
     # =============================================================================
@@ -1489,7 +1489,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/frequency_analysis.pdf")
+    plt.savefig("../data/figures/dyads/frequency_analysis.pdf")
     plt.close()
 
     # =============================================================================
@@ -1605,7 +1605,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/bar_plot_gsi_coherence_interaction.pdf")
+    plt.savefig("../data/figures/dyads/bar_plot_gsi_coherence_interaction.pdf")
     plt.close()
 
     # =============================================================================
@@ -1649,7 +1649,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/polar_hist_relative_phase.pdf")
+    plt.savefig("../data/figures/dyads/polar_hist_relative_phase.pdf")
     plt.close()
 
     # =============================================================================
@@ -1738,7 +1738,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/bar_plot_gsi_coherence_contact.pdf")
+    plt.savefig("../data/figures/dyads/bar_plot_gsi_coherence_contact.pdf")
     plt.close()
 
     # =============================================================================
@@ -1936,7 +1936,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/gsi_coherence_distance.pdf")
+    plt.savefig("../data/figures/dyads/gsi_coherence_distance.pdf")
     plt.close()
 
     fig, ax = plt.subplots(2, 3, figsize=(14, 7))
@@ -2321,7 +2321,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/nonlinear_metrics.pdf")
+    plt.savefig("../data/figures/dyads/nonlinear_metrics.pdf")
 
     # =============================================================================
     # Prints

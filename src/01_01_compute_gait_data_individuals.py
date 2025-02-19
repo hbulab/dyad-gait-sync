@@ -90,4 +90,4 @@ if __name__ == "__main__":
 
     # save data to file using pandas
     df = pd.DataFrame(values)
-    df.to_csv("../data/csv/gait_article_individuals.csv", index=False)
+    df.to_csv("../data/csv/gait_data_individuals.csv", index=False)
