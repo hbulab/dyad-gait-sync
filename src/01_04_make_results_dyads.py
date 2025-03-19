@@ -160,43 +160,33 @@ def make_gait_stats_table(df_dyads, df_individuals):
         f.write("\\end{table}\n")
 
 
-def make_table_gsi_coherence_interaction(df_dyads):
-    with open("../data/tables/dyads/gsi_coherence_interaction.tex", "w") as f:
+def make_table_gsi_interaction(df_dyads):
+    with open("../data/tables/dyads/gsi_interaction.tex", "w") as f:
         f.write("\\begin{table}\n")
-        f.write("\\centering\n")
         f.write(
-            "\\caption{GSI and CWC for different intensities of interaction. Kruskal-Wallis $p$-values for the difference between the intensities of interaction and Student's $t$-test $p$-values for the difference between all dyads and the baseline are also shown.}\n"
+            "\\caption{GSI for different intensities of interaction and baselines. Kruskal-Wallis $p$-values for the difference between the intensities of interaction and Student's $t$-test $p$-values for the difference between all dyads and the baselines are also shown\\label{tab:coherence_interaction}}\n"
         )
-        f.write("\\label{tab:sync_stats}\n")
-
-        f.write("\\begin{tabular}{lcccc}\n")
+        f.write("\\begin{tabular}{lcc}\n")
         f.write("\\toprule\n")
-        f.write(
-            "Intensity of interaction & \\multicolumn{2}{c}{GSI} & \\multicolumn{2}{c}{CWC} \\\\\n"
-        )
+        f.write("Intensity of interaction & \\multicolumn{2}{c}{GSI}  \\\\\n")
         f.write("\\midrule\n")
 
         # compute p-values
         all_values_gsi = []
-        all_values_coherence = []
         for interaction in interactions:
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
                 & (df_dyads["delta_f"] < max_delta_f)
             ]
             values_gsi = data["gsi"]
-            values_coherence = data["coherence"]
 
             # remove NaNs
             values_gsi = values_gsi[~np.isnan(values_gsi)]
-            values_coherence = values_coherence[~np.isnan(values_coherence)]
 
             all_values_gsi.append(values_gsi)
-            all_values_coherence.append(values_coherence)
 
         # p-values for Kruskal-Wallis
         _, p_val_gsi = kruskal(*all_values_gsi)
-        _, p_val_coherence = kruskal(*all_values_coherence)
 
         for interaction in [0, 1, 2, 3, 4, 5]:
 
@@ -205,23 +195,19 @@ def make_table_gsi_coherence_interaction(df_dyads):
                 & (df_dyads["delta_f"] < max_delta_f)
             ]
             values_gsi = data["gsi"]
-            values_coherence = data["coherence"]
 
             # remove NaNs
             values_gsi = values_gsi[~np.isnan(values_gsi)]
-            values_coherence = values_coherence[~np.isnan(values_coherence)]
 
             if interaction == 0:
                 f.write(
                     f"{plot_data['interaction'][interaction]['label']} & "
-                    f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_gsi)}$}} &"
-                    f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_coherence)}$}} \\\\\n"
+                    f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_gsi)}$}} \\\\\n"
                 )
             else:
                 f.write(
                     f"{plot_data['interaction'][interaction]['label']} & "
-                    f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & &"
-                    f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\\\\n"
+                    f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & \\\\\n"
                 )
 
             if interaction == 3:
@@ -231,12 +217,9 @@ def make_table_gsi_coherence_interaction(df_dyads):
 
         # averages
         flat_gsi = np.concatenate(all_values_gsi)
-        flat_coherence = np.concatenate(all_values_coherence)
 
         f.write(
-            f"All & "
-            f"${np.mean(flat_gsi):.2f} \\pm {np.std(flat_gsi):.2f}$ & & "
-            f"${np.mean(flat_coherence):.2f} \\pm {np.std(flat_coherence):.2f}$ & \\\\\n"
+            f"All & " f"${np.mean(flat_gsi):.2f} \\pm {np.std(flat_gsi):.2f}$ & \\\\\n"
         )
 
         f.write("\\midrule\n")
@@ -248,6 +231,93 @@ def make_table_gsi_coherence_interaction(df_dyads):
         values_gsi_baseline_2 = df_dyads[
             (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
         ]["gsi"]
+
+        # remove NaNs
+        values_gsi_baseline_1 = values_gsi_baseline_1[~np.isnan(values_gsi_baseline_1)]
+        values_gsi_baseline_2 = values_gsi_baseline_2[~np.isnan(values_gsi_baseline_2)]
+
+        _, p_val_gsi_1 = ttest_ind(flat_gsi, values_gsi_baseline_1)
+        _, p_val_gsi_2 = ttest_ind(flat_gsi, values_gsi_baseline_2)
+
+        f.write(
+            f"Student's $t$-test $p$-value for $B_r$ & "
+            f"${get_formatted_p_value(p_val_gsi_1)}$ &\\\\\n"
+        )
+
+        f.write(
+            f"Student's $t$-test $p$-value for $B_c$ & "
+            f"${get_formatted_p_value(p_val_gsi_2)}$  &\\\\\n"
+        )
+
+        f.write("\\bottomrule\n")
+        f.write("\\end{tabular}\n")
+        f.write("\\end{table}\n")
+
+
+def make_table_coherence_interaction(df_dyads):
+    with open("../data/tables/dyads/coherence_interaction.tex", "w") as f:
+        f.write("\\begin{table}\n")
+        f.write("\\centering\n")
+        f.write(
+            "\\caption{CWC for different intensities of interaction and baselines. Kruskal-Wallis $p$-values for the difference between the intensities of interaction and Student's $t$-test $p$-values for the difference between all dyads and the baselines are also shown\\label{tab:coherence_interaction}}\n"
+        )
+        f.write("\\begin{tabular}{lcc}\n")
+        f.write("\\toprule\n")
+        f.write(" & \\multicolumn{2}{c}{CWC} \\\\\n")
+        f.write("\\midrule\n")
+
+        # compute p-values
+        values_pvalues = []
+        for interaction in [0, 1, 2, 3]:
+            data = df_dyads[
+                (df_dyads["interaction"] == interaction)
+                & (df_dyads["delta_f"] < max_delta_f)
+            ]
+            values_coherence = data["coherence"]
+
+            # remove NaNs
+            values_coherence = values_coherence[~np.isnan(values_coherence)]
+
+            values_pvalues.append(values_coherence)
+
+        all_values_coherence = np.concatenate(values_pvalues)
+
+        # p-values for Kruskal-Wallis
+        _, p_val_coherence = kruskal(*values_pvalues)
+
+        for interaction in [4, 5, 0, 1, 2, 3]:
+
+            data = df_dyads[
+                (df_dyads["interaction"] == interaction)
+                & (df_dyads["delta_f"] < max_delta_f)
+            ]
+            values_coherence = data["coherence"]
+
+            # remove NaNs
+            values_coherence = values_coherence[~np.isnan(values_coherence)]
+
+            if interaction == 0:
+                f.write(
+                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_coherence)}$}} \\\\\n"
+                )
+            else:
+                f.write(
+                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\\\\n"
+                )
+
+            if interaction == 5:
+                f.write("\\midrule\n")
+                f.write(
+                    f"All & "
+                    f"${np.mean(all_values_coherence):.2f} \\pm {np.std(all_values_coherence) / np.sqrt(len(all_values_coherence)):.2f}$ & \\\\\n"
+                )
+                f.write("\\midrule\n")
+
+        f.write("\\midrule\n")
+
+        # all vs baseline
         values_coherence_baseline_1 = df_dyads[
             (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
         ]["coherence"]
@@ -256,9 +326,6 @@ def make_table_gsi_coherence_interaction(df_dyads):
         ]["coherence"]
 
         # remove NaNs
-        values_gsi_baseline_1 = values_gsi_baseline_1[~np.isnan(values_gsi_baseline_1)]
-        values_gsi_baseline_2 = values_gsi_baseline_2[~np.isnan(values_gsi_baseline_2)]
-
         values_coherence_baseline_1 = values_coherence_baseline_1[
             ~np.isnan(values_coherence_baseline_1)
         ]
@@ -266,20 +333,20 @@ def make_table_gsi_coherence_interaction(df_dyads):
             ~np.isnan(values_coherence_baseline_2)
         ]
 
-        _, p_val_gsi_1 = ttest_ind(flat_gsi, values_gsi_baseline_1)
-        _, p_val_gsi_2 = ttest_ind(flat_gsi, values_gsi_baseline_2)
-        _, p_val_coherence_1 = ttest_ind(flat_coherence, values_coherence_baseline_1)
-        _, p_val_coherence_2 = ttest_ind(flat_coherence, values_coherence_baseline_2)
+        _, p_val_coherence_1 = ttest_ind(
+            all_values_coherence, values_coherence_baseline_1
+        )
+        _, p_val_coherence_2 = ttest_ind(
+            all_values_coherence, values_coherence_baseline_2
+        )
 
         f.write(
             f"Student's $t$-test $p$-value for $B_r$ & "
-            f"${get_formatted_p_value(p_val_gsi_1)}$ & & "
             f"${get_formatted_p_value(p_val_coherence_1)}$  &\\\\\n"
         )
 
         f.write(
             f"Student's $t$-test $p$-value for $B_c$ & "
-            f"${get_formatted_p_value(p_val_gsi_2)}$ &  &"
             f"${get_formatted_p_value(p_val_coherence_2)}$ &\\\\\n"
         )
 
@@ -493,10 +560,10 @@ def make_relative_phase_table(df_dyads):
         f.write("\\label{tab:relative_phase}\n")
         f.write("\\begin{tabular}{lcc}\n")
         f.write("\\toprule\n")
-        f.write("Intensity of interaction & Mean relative phase (°) & Variance \\\\\n")
+        f.write("& Mean relative phase (°) & Variance \\\\\n")
         f.write("\\midrule\n")
-        all_values_phase = []
-        for interaction in [0, 1, 2, 3, 4, 5]:
+
+        for interaction in [4, 5, 0, 1, 2, 3]:
 
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
@@ -510,15 +577,13 @@ def make_relative_phase_table(df_dyads):
             mean_phase = np.rad2deg(circmean(values_phase, high=np.pi, low=-np.pi))  # type: ignore
             var_phase = circvar(values_phase, high=np.pi, low=-np.pi)  # type: ignore
 
-            all_values_phase.append(values_phase)
-
             f.write(
                 f"{plot_data['interaction'][interaction]['label']} & "
                 f"${mean_phase:.2f}$ & "
                 f"${var_phase:.2f}$ \\\\\n"
             )
 
-            if interaction == 3:
+            if interaction == 5:
                 f.write("\\midrule\n")
 
         f.write("\\bottomrule\n")
@@ -536,28 +601,24 @@ def make_table_delta_f(df_dyads):
         f.write("\\label{tab:delta_f}\n")
         f.write("\\begin{tabular}{lcc}\n")
         f.write("\\toprule\n")
-        f.write(
-            "Intensity of interaction & \\multicolumn{2}{c}{$\\Delta f$ [Hz]}  \\\\\n"
-        )
+        f.write("& \\multicolumn{2}{c}{$\\Delta f$ [Hz]}  \\\\\n")
         f.write("\\midrule\n")
 
         # compute the p-values
         values_pvalue = []
-        for interaction in interactions_with_baseline:
+        for interaction in [0, 1, 2, 3]:
             data = df_dyads[(df_dyads["interaction"] == interaction)]
             values_delta_f = data["delta_f"]
-
             # remove NaNs
             values_delta_f = values_delta_f[~np.isnan(values_delta_f)]
+            values_pvalue.append(values_delta_f)
 
-            if interaction <= 3:
-                values_pvalue.append(values_delta_f)
+        all_values_dyads = np.concatenate(values_pvalue)
 
         # p-value for Kruskal-Wallis
         _, p_val_dyads = kruskal(*values_pvalue)
 
-        all_values_dyads = []
-        for interaction in [0, 1, 2, 3, 4, 5]:
+        for interaction in [4, 5, 0, 1, 2, 3]:
 
             data = df_dyads[(df_dyads["interaction"] == interaction)]
             values_delta_f = data["delta_f"]
@@ -568,9 +629,6 @@ def make_table_delta_f(df_dyads):
             mean_delta_f = np.mean(values_delta_f)
             std_delta_f = np.std(values_delta_f)
             ste_delta_f = std_delta_f / np.sqrt(len(values_delta_f))
-
-            if interaction <= 3:
-                all_values_dyads.extend(values_delta_f)
 
             if interaction == 0:
                 f.write(
@@ -583,7 +641,13 @@ def make_table_delta_f(df_dyads):
                     f"${mean_delta_f:.2f} \\pm {ste_delta_f:.2f}$ & \\\\\n"
                 )
 
-            if interaction == 3:
+            if interaction == 5:
+                f.write("\\midrule\n")
+                # all values together
+                f.write(
+                    f"All & "
+                    f"${np.mean(all_values_dyads):.2f} \\pm {np.std(all_values_dyads) / np.sqrt(len(all_values_dyads)):.2f}$ & \\\\\n"
+                )
                 f.write("\\midrule\n")
 
         f.write("\\midrule\n")
@@ -611,17 +675,14 @@ def make_table_delta_f(df_dyads):
         f.write("\\end{table}\n")
 
 
-def make_table_counts(df_dyads):
-    with open("../data/tables/dyads/counts_dyads.tex", "w") as f:
+def make_table_counts_dyads_interaction(df_dyads):
+    with open("../data/tables/dyads/counts_dyads_interaction.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
-            "\\caption{Breakdown of the number of dyads for (a) different intensities of interaction and (b) presence of contact.}\n"
+            "\\caption{Breakdown of the number of dyads for different intensities of interaction.}\n"
         )
-        f.write("\\label{tab:counts_dyads}\n")
-        f.write("\\begin{subtable}{.45\\linewidth}\n")
-        f.write("\\centering\n")
-        f.write("\\caption{}\n")
+        f.write("\\label{tab:counts_dyads_interaction}\n")
         f.write("\\begin{tabular}{lc}\n")
         f.write("\\toprule\n")
         f.write("Intensity of interaction & Count \\\\\n")
@@ -639,10 +700,17 @@ def make_table_counts(df_dyads):
         f.write("\\bottomrule\n")
 
         f.write("\\end{tabular}\n")
-        f.write("\\end{subtable}\n")
-        f.write("\\begin{subtable}{.45\\linewidth}\n")
+        f.write("\\end{table}\n")
+
+
+def make_table_counts_dyads_contact(df_dyads):
+    with open("../data/tables/dyads/counts_dyads_contact.tex", "w") as f:
+        f.write("\\begin{table}\n")
         f.write("\\centering\n")
-        f.write("\\caption{}\n")
+        f.write(
+            "\\caption{Breakdown of the number of dyads with and without contact.}\n"
+        )
+        f.write("\\label{tab:counts_dyads_contacts}\n")
         f.write("\\begin{tabular}{lc}\n")
         f.write("\\toprule\n")
         f.write("Contact & Count \\\\\n")
@@ -657,8 +725,6 @@ def make_table_counts(df_dyads):
 
         f.write("\\bottomrule\n")
         f.write("\\end{tabular}\n")
-        f.write("\\end{subtable}\n")
-
         f.write("\\end{table}\n")
 
 
@@ -697,7 +763,7 @@ def make_ssmd_table(df_dyads, metric, double=False, positive=False):
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
-            f"\\caption{{SSMD for pairwise comparisons of the {plot_data['metrics'][metric]['table_label']} between different intensities of interaction.}}\n"
+            f"\\caption{{SSMD for pairwise comparisons of the {plot_data['metrics'][metric]['table_label']} the baselines and dyads with different intensities of interaction.}}\n"
         )
         f.write(f"\\label{{tab:ssmd_{metric}}}\n")
         f.write("\\begin{tabular}{lcccccc}\n")
@@ -1496,9 +1562,8 @@ if __name__ == "__main__":
     # bar plot GSIs/CWC vs interaction
     # =============================================================================
 
-    fig, ax = plt.subplots(1, 2, figsize=(12, 5))
-
-    for i, (metric, label) in enumerate(zip(["gsi", "coherence"], ["(a)", "(b)"])):
+    for metric in ["gsi", "coherence"]:
+        fig, ax = plt.subplots(figsize=(6, 4))
         means = []
         values_for_p_values = []
         for j, interaction in enumerate(interactions_with_baseline):
@@ -1522,7 +1587,7 @@ if __name__ == "__main__":
 
             means.append(mean_metric)
 
-            ax[i].bar(
+            ax.bar(
                 j,
                 mean_metric,
                 yerr=ste_metric,
@@ -1530,17 +1595,16 @@ if __name__ == "__main__":
                 capsize=5,
             )
 
-        ax[i].set_xlabel("Intensity of interaction and baselines")
-        ax[i].set_ylabel(plot_data["metrics"][metric]["label"])
-        ax[i].grid(color="lightgray", linestyle="--")
-        ax[i].set_xticks(ticks_baseline)
-        ax[i].set_xticklabels(
+        ax.set_xlabel("Intensity of interaction and baselines")
+        ax.set_ylabel(plot_data["metrics"][metric]["label"])
+        ax.grid(color="lightgray", linestyle="--")
+        ax.set_xticks(ticks_baseline)
+        ax.set_xticklabels(
             [
                 plot_data["interaction"][i]["short_label"]
                 for i in interactions_with_baseline
             ]
         )
-        ax[i].set_title(label, y=-0.35)
 
         # add p-values
         _, p_val = kruskal(*values_for_p_values)
@@ -1559,8 +1623,8 @@ if __name__ == "__main__":
         max_val = max(means)
         y = max_val * 1.1
         dh = max_val * 0.05
-        ax[i].plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-        ax[i].text(
+        ax.plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
+        ax.text(
             3.5,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val),
@@ -1570,13 +1634,13 @@ if __name__ == "__main__":
         )
 
         y = y + 6 * dh
-        ax[i].plot(
+        ax.plot(
             [0, 0, 3.5, 3.5],
             [y, y + dh, y + dh, y],
             color="gray",
             linewidth=1.5,
         )
-        ax[i].text(
+        ax.text(
             (0 + 3.5) / 2,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val_baseline_br),
@@ -1586,13 +1650,13 @@ if __name__ == "__main__":
         )
 
         y = y + 6 * dh
-        ax[i].plot(
+        ax.plot(
             [1, 1, 3.5, 3.5],
             [y, y + dh, y + dh, y],
             color="gray",
             linewidth=1.5,
         )
-        ax[i].text(
+        ax.text(
             (1 + 3.5) / 2,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val_baseline_bc),
@@ -1601,12 +1665,12 @@ if __name__ == "__main__":
             color="gray",
         )
 
-        ax[i].set_ylim(0, float(y) + 8 * dh)
+        ax.set_ylim(0, float(y) + 8 * dh)
 
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig("../data/figures/dyads/bar_plot_gsi_coherence_interaction.pdf")
-    plt.close()
+        plt.tight_layout()
+        # plt.show()
+        plt.savefig(f"../data/figures/dyads/bar_plot_{metric}_interaction.pdf")
+        plt.close()
 
     # =============================================================================
     # Polar histograms of the relative phase
@@ -1742,12 +1806,14 @@ if __name__ == "__main__":
     plt.close()
 
     # =============================================================================
-    # GSI vs. distance (all)
+    # DISTANCE ANALYSIS
     # =============================================================================
 
-    fig = plt.figure(figsize=(16, 8))
+    # =============================================================================
+    # Coherence vs. distance (all)
+    # =============================================================================
 
-    gs = GridSpec(2, 3)
+    fig, axes = plt.subplots(1, 3, figsize=(18, 4))
 
     n_bins = 8
     distance_min = 0.6
@@ -1759,46 +1825,13 @@ if __name__ == "__main__":
 
     bin_centers, means, stds, errors, n_values = compute_binned_values(
         data["interpersonal_distance"],
-        data["gsi"],
-        distance_min,
-        distance_max,
-        n_bins,
-    )
-
-    print(bin_centers)
-
-    ax00 = fig.add_subplot(gs[0, 0])
-    ax00.errorbar(
-        bin_centers,
-        means,
-        yerr=errors,
-        linewidth=2,
-        color=plot_data["interaction"][4]["color"],
-        capsize=2,
-        marker=plot_data["interaction"][4]["marker"],
-    )
-
-    ax00.set_xlabel("$\\delta$ [m]")
-    ax00.set_ylabel("GSI")
-    ax00.grid(color="lightgray", linestyle="--")
-    ax00.set_xlim(0.5, 2)
-    ax00.set_title("(a)", y=-0.35)
-
-    # =============================================================================
-    # Coherence vs. distance (all)
-    # =============================================================================
-
-    ax10 = fig.add_subplot(gs[1, 0])
-
-    bin_centers, means, stds, errors, n_values = compute_binned_values(
-        data["interpersonal_distance"],
         data["coherence"],
         distance_min,
         distance_max,
         n_bins,
     )
 
-    ax10.errorbar(
+    axes[0].errorbar(
         bin_centers,
         means,
         yerr=errors,
@@ -1808,17 +1841,15 @@ if __name__ == "__main__":
         marker=plot_data["interaction"][4]["marker"],
     )
 
-    ax10.set_xlabel("$\\delta$ [m]")
-    ax10.set_ylabel("CWC")
-    ax10.grid(color="lightgray", linestyle="--")
-    ax10.set_xlim(0.5, 2)
-    ax10.set_title("(b)", y=-0.35)
+    axes[0].set_xlabel("$\\delta$ [m]")
+    axes[0].set_ylabel("CWC")
+    axes[0].grid(color="lightgray", linestyle="--")
+    axes[0].set_xlim(0.5, 2)
+    axes[0].set_title("(a)", y=-0.35)
 
     # =============================================================================
     # Distance vs. interaction
     # =============================================================================
-
-    ax01 = fig.add_subplot(gs[0, 1])
 
     distance_min = 0.5
     distance_max = 2
@@ -1835,7 +1866,7 @@ if __name__ == "__main__":
             data["interpersonal_distance"], distance_min, distance_max, n_bins
         )
 
-        ax01.plot(
+        axes[1].plot(
             bins,
             pdf,
             label=plot_data["interaction"][interaction]["short_label"],
@@ -1844,60 +1875,16 @@ if __name__ == "__main__":
             color=plot_data["interaction"][interaction]["color"],
         )
 
-    ax01.legend()
-    ax01.set_xlabel("$\\delta$ [m]")
-    ax01.set_ylabel("$p(\\delta)$")
-    ax01.grid(color="lightgray", linestyle="--")
-    ax01.set_xlim(0.5, 2)
-    ax01.set_title("(c)", y=-0.35)
-
-    # =============================================================================
-    # GSI vs. distance (wrt interaction)
-    # =============================================================================
-
-    ax02 = fig.add_subplot(gs[0, 2])
-
-    # distance_min = 0.5
-    # distance_max = 2
-    # n_bins = 5
-
-    for interaction in interactions_with_close_baseline:
-
-        data = df_dyads[
-            (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
-        ]
-
-        bin_centers, means, stds, errors, n_values = compute_binned_values(
-            data["interpersonal_distance"],
-            data["gsi"],
-            distance_min,
-            distance_max,
-            n_bins,
-        )
-        ax02.errorbar(
-            bin_centers,
-            means,
-            yerr=errors,
-            linewidth=2,
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
-            label=plot_data["interaction"][interaction]["short_label"],
-            capsize=2,
-        )
-
-    ax02.legend()
-    ax02.set_xlabel("$\\delta$ [m]")
-    ax02.set_ylabel("GSI")
-    ax02.grid(color="lightgray", linestyle="--")
-    ax02.set_xlim(0, 2)
-    ax02.set_title("(d)", y=-0.35)
+    axes[1].legend()
+    axes[1].set_xlabel("$\\delta$ [m]")
+    axes[1].set_ylabel("$p(\\delta)$")
+    axes[1].grid(color="lightgray", linestyle="--")
+    axes[1].set_xlim(0.5, 2)
+    axes[1].set_title("(c)", y=-0.35)
 
     # =============================================================================
     # Coherence vs. distance (wrt interaction)
     # =============================================================================
-
-    ax12 = fig.add_subplot(gs[1, 2])
 
     n_bins = 5
 
@@ -1916,7 +1903,7 @@ if __name__ == "__main__":
             n_bins,
         )
 
-        ax12.errorbar(
+        axes[2].errorbar(
             bin_centers,
             means,
             yerr=errors,
@@ -1927,16 +1914,16 @@ if __name__ == "__main__":
             capsize=2,
         )
 
-    ax12.legend()
-    ax12.set_xlabel("$\\delta$ [m]")
-    ax12.set_ylabel("CWC")
-    ax12.grid(color="lightgray", linestyle="--")
-    ax12.set_xlim(0, 2)
-    ax12.set_title("(e)", y=-0.35)
+    axes[2].legend()
+    axes[2].set_xlabel("$\\delta$ [m]")
+    axes[2].set_ylabel("CWC")
+    axes[2].grid(color="lightgray", linestyle="--")
+    axes[2].set_xlim(0, 2)
+    axes[2].set_title("(e)", y=-0.35)
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/dyads/gsi_coherence_distance.pdf")
+    plt.savefig("../data/figures/dyads/distance_analysis.pdf")
     plt.close()
 
     fig, ax = plt.subplots(2, 3, figsize=(14, 7))
@@ -2349,11 +2336,13 @@ if __name__ == "__main__":
     # Tables
     # =============================================================================
 
-    make_table_counts(df_dyads)
+    make_table_counts_dyads_interaction(df_dyads)
+    make_table_counts_dyads_contact(df_dyads)
     make_gait_stats_table(df_dyads, df_individuals)
     make_table_delta_f(df_dyads)
     make_relative_phase_table(df_dyads)
-    make_table_gsi_coherence_interaction(df_dyads)
+    make_table_gsi_interaction(df_dyads)
+    make_table_coherence_interaction(df_dyads)
     make_tukey_table(df_dyads)
     make_table_gsi_coherence_contact(df_dyads)
     make_table_pearson_correlation(df_dyads, df_individuals)
