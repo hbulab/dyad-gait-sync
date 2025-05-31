@@ -16,6 +16,8 @@ from utils import (
 )
 from scipy.stats import kruskal
 
+from parameters import TRIADS_PARAMETERS, MAX_DELTA_F
+
 
 def make_p_values_table(df_no_nan):
     with open("../data/tables/triads/p_values_triads_formations.tex", "w") as f:
@@ -36,7 +38,7 @@ def make_p_values_table(df_no_nan):
 
                 data = df_no_nan[
                     (df_no_nan["formation"] == formation)
-                    & (df_no_nan["delta_f"] < max_delta_f)
+                    & (df_no_nan["delta_f"] < MAX_DELTA_F)
                 ]
                 positions = data["pair"].unique()
                 values = [
@@ -51,7 +53,7 @@ def make_p_values_table(df_no_nan):
 
             p_values = [get_formatted_p_value(p) for p in p_values]
             f.write(
-                f"{plot_data['formation'][formation]['label']} & ${p_values[0]}$ & ${p_values[1]}$ & ${p_values[2]}$ \\\\\n"
+                f"{TRIADS_PARAMETERS['formation'][formation]['label']} & ${p_values[0]}$ & ${p_values[1]}$ & ${p_values[2]}$ \\\\\n"
             )
 
         f.write("\\bottomrule\n")
@@ -73,7 +75,9 @@ def make_counts_table(df):
         for formation in ["v", "lambda", "abreast", "following"]:
             counts = len(df[(df["formation"] == formation)]) // 3
 
-            f.write(f"{plot_data['formation'][formation]['label']} & {counts} \\\\\n")
+            f.write(
+                f"{TRIADS_PARAMETERS['formation'][formation]['label']} & {counts} \\\\\n"
+            )
 
         f.write("\\bottomrule\n")
         f.write("\\end{tabular}\n")
@@ -129,7 +133,7 @@ def make_counts_table_pairs(df_no_nan):
                 )
 
             f.write(
-                f"{plot_data['formation'][formation]['label']} & {counts[0]} & {counts[1]} & {counts[2]} & {counts[3]} & {counts[4]} & {counts[5]} \\\\\n"
+                f"{TRIADS_PARAMETERS['formation'][formation]['label']} & {counts[0]} & {counts[1]} & {counts[2]} & {counts[3]} & {counts[4]} & {counts[5]} \\\\\n"
             )
 
         f.write("\\bottomrule\n")
@@ -142,135 +146,22 @@ if __name__ == "__main__":
     df = pd.read_csv("../data/csv/gait_data_triads.csv")
     # copy without nan values
 
-    # ============================
-    # Parameters
-    # ============================
-    max_delta_f = 2  # maximum difference in frequency between the two pedestrians
-    plot_data = {
-        "formation": {
-            "v": {"color": "#eae2b7", "label": "$\\vee$", "marker": "o"},
-            "lambda": {"color": "#fcbf49", "label": "$\\wedge$", "marker": "s"},
-            "abreast": {
-                "color": "#2a9d8f",
-                "label": "$\\longleftrightarrow$",
-                "marker": "^",
-            },
-            "following": {
-                "color": "#264653",
-                "label": "$\\updownarrow$",
-                "marker": "v",
-            },
-        },
-        "pair": {
-            "left_center": {"color": "#eae2b7", "label": "L--C", "marker": "o"},
-            "right_center": {
-                "color": "#fcbf49",
-                "label": "R--C",
-                "marker": "s",
-            },
-            "left_right": {"color": "#2a9d8f", "label": "L--R", "marker": "^"},
-            "front_center": {
-                "color": "#264653",
-                "label": "Front-Center",
-                "marker": "v",
-            },
-            "front_back": {"color": "#e76f51", "label": "Front-Back", "marker": "x"},
-            "back_center": {"color": "#f4a261", "label": "Front-Left", "marker": "D"},
-        },
-        "positions": {
-            "left": {"color": "#eae2b7", "label": "Left", "marker": "o"},
-            "center": {"color": "#fcbf49", "label": "Center", "marker": "s"},
-            "right": {"color": "#2a9d8f", "label": "Right", "marker": "^"},
-            "front": {"color": "#264653", "label": "Front", "marker": "v"},
-            "back": {"color": "#e76f51", "label": "Back", "marker": "x"},
-        },
-        "metrics": {
-            "gsi": {"label": "GSI", "limits": [0, 0.2]},
-            "coherence": {"label": "CWC", "limits": [0, 0.45]},
-            "delta_f": {"label": "$\\Delta f$ (Hz)", "limits": [0, 0.2]},
-            "lyapunov": {
-                "label": "$l_{lyap}$ ($\\times 10^{-3}$)",
-                "limits": [200 * 10 ** (-3), 0.1],
-            },
-            "determinism": {"label": "$D$", "limits": [0.5, 0.5]},
-            "rec": {"label": "\%REC", "limits": [0.1, 0.35]},
-            "det": {"label": "\%DET", "limits": [0.8, 1]},
-            "maxline": {"label": "MAXLINE", "limits": [50, 150]},
-        },
-    }
-
     # increase the font size
     plt.rcParams.update({"font.size": 14})
 
     # ============================
-    # Delta f vs formation
+    # Metric vs formation
     # ============================
 
-    fig, ax = plt.subplots(1, 1, figsize=(6, 3))
+    for metric in ["delta_f", "gsi", "coherence"]:
 
-    values_for_p_values = []
-    means = []
-    for formation in ["v", "lambda", "abreast"]:
-        data = df[(df["formation"] == formation) & (df["delta_f"] < max_delta_f)]
-
-        values = data["delta_f"]
-
-        # remove nan values
-        values = values[~np.isnan(values)]
-
-        values_for_p_values.append(values)
-
-        mean_delta_f = np.mean(values)
-        std_delta_f = np.std(values)
-        ste_delta_f = std_delta_f / np.sqrt(len(values))
-
-        means.append(mean_delta_f)
-
-        ax.bar(
-            plot_data["formation"][formation]["label"],
-            mean_delta_f,
-            yerr=ste_delta_f,
-            color=plot_data["formation"][formation]["color"],
-            capsize=5,
-        )
-
-    ax.set_ylabel(plot_data["metrics"]["delta_f"]["label"])
-    ax.grid(color="lightgray", linestyle="--")
-    ax.set_ylim(plot_data["metrics"]["delta_f"]["limits"])
-
-    # add p-value
-    _, p_val = kruskal(*values_for_p_values)
-    # bracket for p-value
-    max_val = max(means)
-    y = max_val * 1.1
-    dh = max_val * 0.05
-    ax.plot([0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-    ax.text(
-        1,
-        float(y) + 4 * dh,
-        get_formatted_p_value_stars(p_val),
-        ha="center",
-        va="center",
-        color="gray",
-    )
-    ax.set_ylim(0, float(y) + 8 * dh)
-
-    plt.tight_layout()
-    plt.savefig("../data/figures/triads/delta_f_formation.pdf")
-
-    # ============================
-    # Bar plot GSI vs formation and coherence vs formation
-    # ============================
-
-    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
-
-    for i, (metric, label) in enumerate(zip(["gsi", "coherence"], ["(a)", "(b)"])):
+        fig, ax = plt.subplots(figsize=(6, 3))
 
         values_for_p_values = []
         means = []
 
         for formation in ["v", "lambda", "abreast"]:
-            data = df[(df["formation"] == formation) & (df["delta_f"] < max_delta_f)]
+            data = df[(df["formation"] == formation) & (df["delta_f"] < MAX_DELTA_F)]
 
             values_metric = data[metric]
 
@@ -285,26 +176,25 @@ if __name__ == "__main__":
 
             means.append(mean_metric)
 
-            ax[i].bar(
-                plot_data["formation"][formation]["label"],
+            ax.bar(
+                TRIADS_PARAMETERS["formation"][formation]["label"],
                 mean_metric,
                 yerr=ste_metric,
-                color=plot_data["formation"][formation]["color"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
                 capsize=5,
             )
 
-        ax[i].set_ylabel(plot_data["metrics"][metric]["label"])
-        ax[i].grid(color="lightgray", linestyle="--")
-        ax[i].set_title(label, y=-0.3)
-        ax[i].set_ylim(plot_data["metrics"][metric]["limits"])
+        ax.set_ylabel(TRIADS_PARAMETERS["metrics"][metric]["label"])
+        ax.grid(color="lightgray", linestyle="--")
+        ax.set_ylim(TRIADS_PARAMETERS["metrics"][metric]["limits"])
 
         _, p_val = kruskal(*values_for_p_values)
         # bracket for p-value
         max_val = max(means)
         y = max_val * 1.1
         dh = max_val * 0.05
-        ax[i].plot([0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-        ax[i].text(
+        ax.plot([0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
+        ax.text(
             1,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val),
@@ -312,138 +202,67 @@ if __name__ == "__main__":
             va="center",
             color="gray",
         )
-        ax[i].set_ylim(0, float(y) + 8 * dh)
+        ax.set_ylim(0, float(y) + 8 * dh)
 
-    plt.tight_layout()
-    plt.savefig("../data/figures/triads/gsi_coherence_formation.pdf")
-    plt.close()
-    # plt.show()
-
-    # ============================
-    # Delta f vs positions (left, right, center)
-    # ============================
-
-    fig, ax = plt.subplots(3, 1, figsize=(6, 10))
-
-    for i, formation in enumerate(["v", "lambda", "abreast"]):
-
-        data = df[(df["formation"] == formation) & (df["delta_f"] < max_delta_f)]
-
-        values_for_p_values = []
-        means = []
-        for j, position in enumerate(["left_center", "right_center", "left_right"]):
-
-            data_position = data[data["pair"] == position]
-
-            values = data_position["delta_f"]
-
-            # remove nan values
-            values = values[~np.isnan(values)]
-
-            values_for_p_values.append(values)
-
-            mean_delta_f = np.mean(values)
-            std_delta_f = np.std(values)
-            ste_delta_f = std_delta_f / np.sqrt(len(values))
-
-            means.append(mean_delta_f)
-
-            ax[i].bar(
-                plot_data["pair"][position]["label"],
-                mean_delta_f,
-                yerr=ste_delta_f,
-                color=plot_data["pair"][position]["color"],
-                capsize=5,
-            )
-
-        ax[i].set_ylabel(plot_data["metrics"]["delta_f"]["label"])
-        ax[i].grid(color="lightgray", linestyle="--")
-        ax[i].set_title(f"{plot_data['formation'][formation]['label']} formation")
-
-        _, p_val = kruskal(*values_for_p_values)
-        # bracket for p-value
-        max_val = max(means)
-        y = max_val * 1.3
-        dh = max_val * 0.05
-        ax[i].plot([0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-        ax[i].text(
-            1,
-            float(y) + 4 * dh,
-            get_formatted_p_value_stars(p_val),
-            ha="center",
-            va="center",
-            color="gray",
-        )
-        ax[i].set_ylim(0, float(y) + 8 * dh)
-
-    plt.tight_layout()
-    plt.savefig("../data/figures/triads/delta_f_position.pdf")
-    plt.close()
+        plt.tight_layout()
+        plt.savefig(f"../data/figures/triads/{metric}_formation.pdf")
+        plt.close()
+        # plt.show()
 
     # ============================
-    # Bar plot GSI vs positions (left, right, center) and coherence vs positions
+    # Metric vs position
     # ============================
 
-    fig = plt.figure(figsize=(12, 12), constrained_layout=True)
+    for metric in ["gsi", "coherence", "delta_f"]:
 
-    labels = "abcdef"
+        fig, ax = plt.subplots(3, 1, figsize=(6, 10))
 
-    subfigs = fig.subfigures(nrows=3, ncols=1)
-    for i, (formation, subfig) in enumerate(zip(["v", "lambda", "abreast"], subfigs)):
+        for i, formation in enumerate(["v", "lambda", "abreast"]):
 
-        data_formation = df[
-            (df["formation"] == formation) & (df["delta_f"] < max_delta_f)
-        ]
-
-        subfig.suptitle(f"{plot_data['formation'][formation]['label']} formation")
-        axs = subfig.subplots(nrows=1, ncols=2)
-
-        for j, metric in enumerate(["gsi", "coherence"]):
+            data = df[(df["formation"] == formation) & (df["delta_f"] < MAX_DELTA_F)]
 
             values_for_p_values = []
             means = []
-            for position in [
-                "left_center",
-                "right_center",
-                "left_right",
-            ]:
-                data = data_formation[data_formation["pair"] == position]
+            for j, position in enumerate(["left_center", "right_center", "left_right"]):
 
-                data_metric = data[metric]
+                data_position = data[data["pair"] == position]
+
+                values = data_position[metric]
 
                 # remove nan values
-                data_metric = data_metric[~np.isnan(data_metric)]
+                values = values[~np.isnan(values)]
 
-                values_for_p_values.append(data_metric)
+                values_for_p_values.append(values)
 
-                mean_metric = np.mean(data_metric)
-                std_metric = np.std(data_metric)
-                ste_metric = mean_metric / np.sqrt(len(data_metric))
+                mean = np.mean(values)
+                std = np.std(values)
+                ste = std / np.sqrt(len(values))
 
-                means.append(mean_metric)
+                means.append(mean)
 
-                axs[j].bar(
-                    plot_data["pair"][position]["label"],
-                    mean_metric,
-                    yerr=ste_metric,
-                    color=plot_data["pair"][position]["color"],
+                ax[i].bar(
+                    TRIADS_PARAMETERS["pair"][position]["label"],
+                    mean,
+                    yerr=ste,
+                    color=TRIADS_PARAMETERS["pair"][position]["color"],
                     capsize=5,
                 )
 
-            axs[j].set_ylabel(plot_data["metrics"][metric]["label"])
-            axs[j].grid(color="lightgray", linestyle="--")
-            axs[j].set_title(f"({labels[i*2+j]})", y=-0.3)
-            axs[j].set_ylim(plot_data["metrics"][metric]["limits"])
+            ax[i].set_ylabel(TRIADS_PARAMETERS["metrics"][metric]["label"])
+            ax[i].grid(color="lightgray", linestyle="--")
+            ax[i].set_title(
+                f"{TRIADS_PARAMETERS['formation'][formation]['label']} formation"
+            )
 
             _, p_val = kruskal(*values_for_p_values)
             # bracket for p-value
             max_val = max(means)
             y = max_val * 1.3
             dh = max_val * 0.05
-            axs[j].plot(
+            ax[i].plot(
                 [0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5
             )
-            axs[j].text(
+            ax[i].text(
                 1,
                 float(y) + 4 * dh,
                 get_formatted_p_value_stars(p_val),
@@ -451,12 +270,11 @@ if __name__ == "__main__":
                 va="center",
                 color="gray",
             )
-            axs[j].set_ylim(0, float(y) + 8 * dh)
+            ax[i].set_ylim(0, float(y) + 8 * dh)
 
-    # plt.tight_layout()
-    plt.savefig("../data/figures/triads/gsi_coherence_position.pdf")
-    plt.close()
-    # plt.show()
+        plt.tight_layout()
+        plt.savefig(f"../data/figures/triads/{metric}_position.pdf")
+        plt.close()
 
     # ============================
     # Scatter plot positions
@@ -480,23 +298,23 @@ if __name__ == "__main__":
             ax.scatter(
                 position_left_x,
                 position_left_y,
-                color=plot_data["formation"][formation]["color"],
-                marker=plot_data["formation"][formation]["marker"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
+                marker=TRIADS_PARAMETERS["formation"][formation]["marker"],
             )
 
             ax.scatter(
                 position_center_x,
                 position_center_y,
-                color=plot_data["formation"][formation]["color"],
-                marker=plot_data["formation"][formation]["marker"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
+                marker=TRIADS_PARAMETERS["formation"][formation]["marker"],
             )
 
             ax.scatter(
                 position_right_x,
                 position_right_y,
-                color=plot_data["formation"][formation]["color"],
-                label=plot_data["formation"][formation]["label"],
-                marker=plot_data["formation"][formation]["marker"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
+                label=TRIADS_PARAMETERS["formation"][formation]["label"],
+                marker=TRIADS_PARAMETERS["formation"][formation]["marker"],
             )
 
         elif formation == "following":
@@ -511,23 +329,23 @@ if __name__ == "__main__":
             ax.scatter(
                 position_front_x,
                 position_front_y,
-                color=plot_data["formation"][formation]["color"],
-                marker=plot_data["formation"][formation]["marker"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
+                marker=TRIADS_PARAMETERS["formation"][formation]["marker"],
             )
 
             ax.scatter(
                 position_back_x,
                 position_back_y,
-                color=plot_data["formation"][formation]["color"],
-                marker=plot_data["formation"][formation]["marker"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
+                marker=TRIADS_PARAMETERS["formation"][formation]["marker"],
             )
 
             ax.scatter(
                 position_center_x,
                 position_center_y,
-                color=plot_data["formation"][formation]["color"],
-                label=plot_data["formation"][formation]["label"],
-                marker=plot_data["formation"][formation]["marker"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
+                label=TRIADS_PARAMETERS["formation"][formation]["label"],
+                marker=TRIADS_PARAMETERS["formation"][formation]["marker"],
             )
 
         ax.set_xlabel("x (m)")
@@ -625,7 +443,7 @@ if __name__ == "__main__":
     values_for_p_values = []
     means = []
     for formation in ["v", "lambda", "abreast"]:
-        data = df[(df["formation"] == formation) & (df["delta_f"] < max_delta_f)]
+        data = df[(df["formation"] == formation) & (df["delta_f"] < MAX_DELTA_F)]
 
         values_1 = data["determinism_1"]
         values_2 = data["determinism_2"]
@@ -644,10 +462,10 @@ if __name__ == "__main__":
         means.append(mean_metric)
 
         ax[0][0].bar(
-            plot_data["formation"][formation]["label"],
+            TRIADS_PARAMETERS["formation"][formation]["label"],
             mean_metric,
             yerr=ste_metric,
-            color=plot_data["formation"][formation]["color"],
+            color=TRIADS_PARAMETERS["formation"][formation]["color"],
             capsize=5,
         )
 
@@ -660,7 +478,7 @@ if __name__ == "__main__":
     # bracket for p-value
     max_val = max(means)
     y = max_val * 1.1
-    dh = (max_val - plot_data["metrics"]["determinism"]["limits"][0]) * 0.05
+    dh = (max_val - TRIADS_PARAMETERS["metrics"]["determinism"]["limits"][0]) * 0.05
     ax[0][0].plot([0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
     ax[0][0].text(
         1,
@@ -671,7 +489,7 @@ if __name__ == "__main__":
         color="gray",
     )
     ax[0][0].set_ylim(
-        plot_data["metrics"]["determinism"]["limits"][0], float(y) + 8 * dh
+        TRIADS_PARAMETERS["metrics"]["determinism"]["limits"][0], float(y) + 8 * dh
     )
 
     # ============================
@@ -681,7 +499,7 @@ if __name__ == "__main__":
     values_for_p_values = []
     means = []
     for formation in ["v", "lambda", "abreast"]:
-        data = df[(df["formation"] == formation) & (df["delta_f"] < max_delta_f)]
+        data = df[(df["formation"] == formation) & (df["delta_f"] < MAX_DELTA_F)]
 
         values_1 = data["lyapunov_1"]
         values_2 = data["lyapunov_2"]
@@ -700,10 +518,10 @@ if __name__ == "__main__":
         means.append(mean_metric)
 
         ax[0][1].bar(
-            plot_data["formation"][formation]["label"],
+            TRIADS_PARAMETERS["formation"][formation]["label"],
             mean_metric,
             yerr=ste_metric,
-            color=plot_data["formation"][formation]["color"],
+            color=TRIADS_PARAMETERS["formation"][formation]["color"],
             capsize=5,
         )
 
@@ -723,7 +541,7 @@ if __name__ == "__main__":
     # bracket for p-value
     max_val = max(means)
     y = max_val * 1.1
-    dh = (max_val - plot_data["metrics"]["lyapunov"]["limits"][0]) * 0.05
+    dh = (max_val - TRIADS_PARAMETERS["metrics"]["lyapunov"]["limits"][0]) * 0.05
     ax[0][1].plot([0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
     ax[0][1].text(
         1,
@@ -733,7 +551,9 @@ if __name__ == "__main__":
         va="center",
         color="gray",
     )
-    ax[0][1].set_ylim(plot_data["metrics"]["lyapunov"]["limits"][0], float(y) + 8 * dh)
+    ax[0][1].set_ylim(
+        TRIADS_PARAMETERS["metrics"]["lyapunov"]["limits"][0], float(y) + 8 * dh
+    )
 
     # ============================
     # CRQ
@@ -746,7 +566,7 @@ if __name__ == "__main__":
         values_for_p_values = []
         means = []
         for formation in ["v", "lambda", "abreast"]:
-            data = df[(df["formation"] == formation) & (df["delta_f"] < max_delta_f)]
+            data = df[(df["formation"] == formation) & (df["delta_f"] < MAX_DELTA_F)]
 
             values_metric = data[metric]
 
@@ -762,17 +582,17 @@ if __name__ == "__main__":
             means.append(mean_metric)
 
             ax[1][i].bar(
-                plot_data["formation"][formation]["label"],
+                TRIADS_PARAMETERS["formation"][formation]["label"],
                 mean_metric,
                 yerr=ste_metric,
-                color=plot_data["formation"][formation]["color"],
+                color=TRIADS_PARAMETERS["formation"][formation]["color"],
                 capsize=5,
             )
 
-        ax[1][i].set_ylabel(plot_data["metrics"][metric]["label"])
+        ax[1][i].set_ylabel(TRIADS_PARAMETERS["metrics"][metric]["label"])
         ax[1][i].grid(color="lightgray", linestyle="--")
         ax[1][i].set_title(label, y=-0.4)
-        ax[1][i].set_ylim(plot_data["metrics"][metric]["limits"])
+        ax[1][i].set_ylim(TRIADS_PARAMETERS["metrics"][metric]["limits"])
         ax[1][i].set_xlabel("Formation")
 
         _, p_val = kruskal(*values_for_p_values)
@@ -780,7 +600,7 @@ if __name__ == "__main__":
         # bracket for p-value
         max_val = max(means)
         y = max_val * 1.1
-        dh = (max_val - plot_data["metrics"][metric]["limits"][0]) * 0.05
+        dh = (max_val - TRIADS_PARAMETERS["metrics"][metric]["limits"][0]) * 0.05
         ax[1][i].plot([0, 0, 2, 2], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
         ax[1][i].text(
             1,
@@ -790,7 +610,9 @@ if __name__ == "__main__":
             va="center",
             color="gray",
         )
-        ax[1][i].set_ylim(plot_data["metrics"][metric]["limits"][0], float(y) + 8 * dh)
+        ax[1][i].set_ylim(
+            TRIADS_PARAMETERS["metrics"][metric]["limits"][0], float(y) + 8 * dh
+        )
 
     # remove the last subplot
     fig.delaxes(ax[0][2])

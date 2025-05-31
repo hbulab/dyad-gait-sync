@@ -23,6 +23,8 @@ from utils import (
 from scipy.stats import kruskal, tukey_hsd, circmean, circvar, ttest_ind
 from matplotlib.gridspec import GridSpec
 
+from parameters import DYADS_PARAMETERS, MAX_DELTA_F
+
 
 def make_gait_stats_table(df_dyads, df_individuals):
     with open("../data/tables/dyads/gait_stats.tex", "w") as f:
@@ -84,14 +86,14 @@ def make_gait_stats_table(df_dyads, df_individuals):
 
             if interaction == 0:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                     f"${np.mean(values_velocity):.2f} \\pm {np.std(values_velocity):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_vel)}$}} &"
                     f"${np.mean(values_frequency):.2f} \\pm {np.std(values_frequency):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_freq)}$}} &"
                     f"${np.mean(values_length):.2f} \\pm {np.std(values_length):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_len)}$}} \\\\\n"
                 )
             else:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                     f"${np.mean(values_velocity):.2f} \\pm {np.std(values_velocity):.2f}$ & &"
                     f"${np.mean(values_frequency):.2f} \\pm {np.std(values_frequency):.2f}$ & &"
                     f"${np.mean(values_length):.2f} \\pm {np.std(values_length):.2f}$ & \\\\\n"
@@ -176,7 +178,7 @@ def make_table_gsi_interaction(df_dyads):
         for interaction in interactions:
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
             values_gsi = data["gsi"]
 
@@ -192,7 +194,7 @@ def make_table_gsi_interaction(df_dyads):
 
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
             values_gsi = data["gsi"]
 
@@ -201,12 +203,12 @@ def make_table_gsi_interaction(df_dyads):
 
             if interaction == 0:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                     f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_gsi)}$}} \\\\\n"
                 )
             else:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                     f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & \\\\\n"
                 )
 
@@ -226,10 +228,10 @@ def make_table_gsi_interaction(df_dyads):
 
         # all vs baseline
         values_gsi_baseline_1 = df_dyads[
-            (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
+            (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]["gsi"]
         values_gsi_baseline_2 = df_dyads[
-            (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
+            (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]["gsi"]
 
         # remove NaNs
@@ -271,7 +273,7 @@ def make_table_coherence_interaction(df_dyads):
         for interaction in [0, 1, 2, 3]:
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
             values_coherence = data["coherence"]
 
@@ -289,7 +291,7 @@ def make_table_coherence_interaction(df_dyads):
 
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
             values_coherence = data["coherence"]
 
@@ -298,12 +300,12 @@ def make_table_coherence_interaction(df_dyads):
 
             if interaction == 0:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                     f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_coherence)}$}} \\\\\n"
                 )
             else:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} & "
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                     f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\\\\n"
                 )
 
@@ -319,10 +321,10 @@ def make_table_coherence_interaction(df_dyads):
 
         # all vs baseline
         values_coherence_baseline_1 = df_dyads[
-            (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
+            (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]["coherence"]
         values_coherence_baseline_2 = df_dyads[
-            (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
+            (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]["coherence"]
 
         # remove NaNs
@@ -355,106 +357,69 @@ def make_table_coherence_interaction(df_dyads):
         f.write("\\end{table}\n")
 
 
-def make_table_gsi_coherence_contact(df_dyads):
-    with open("../data/tables/dyads/gsi_coherence_contact.tex", "w") as f:
+def make_table_gsi_contact(df_dyads):
+    with open("../data/tables/dyads/gsi_contact.tex", "w") as f:
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
-            "\\caption{GSI and coherence for different levels of contact. Student's $t$-test $p$-values for the difference between the levels of contact are also shown.}\n"
+            "\\caption{GSI for different levels of contact. Student's $t$-test $p$-values for the difference between the levels of contact are also shown.}\n"
         )
-        f.write("\\label{tab:sync_stats_contact}\n")
-
-        f.write("\\begin{tabular}{lcccc}\n")
+        f.write("\\label{tab:gsi_contact}\n")
+        f.write("\\begin{tabular}{lcc}\n")
         f.write("\\toprule\n")
-        f.write(
-            "Contact state & \\multicolumn{2}{c}{GSI} & \\multicolumn{2}{c}{CWC} \\\\\n"
-        )
+        f.write("Contact state & GSI (Mean $\\pm$ SD) & $p$-value \\\\ \n")
         f.write("\\midrule\n")
 
         all_values_gsi = []
-        all_values_coherence = []
 
-        # compute p-values
         for contact in [0, 1]:
-            data = df_dyads[
-                (df_dyads["contact"] == contact) & (df_dyads["delta_f"] < max_delta_f)
-            ]
-            values_gsi = data["gsi"]
-            values_coherence = data["coherence"]
-
-            # remove NaNs
-            values_gsi = values_gsi[~np.isnan(values_gsi)]
-            values_coherence = values_coherence[~np.isnan(values_coherence)]
-
+            values_gsi = df_dyads[(df_dyads["contact"] == contact)]["gsi"].dropna()
             all_values_gsi.append(values_gsi)
-            all_values_coherence.append(values_coherence)
 
-        # p-values for Student's t-test
+            f.write(
+                f"{DYADS_PARAMETERS['contact'][contact]['label']} & "
+                f"${values_gsi.mean():.2f} \pm {values_gsi.std():.2f}$ & "
+                f"\\\\ \n"
+            )
+
         _, p_val_gsi = ttest_ind(*all_values_gsi)
-        _, p_val_coherence = ttest_ind(*all_values_coherence)
+        f.write(f"\\midrule\n")
+        f.write(f"p-value & & ${get_formatted_p_value(p_val_gsi)}$ \\\\ \n")
+        f.write("\\bottomrule\n")
+        f.write("\\end{tabular}\n")
+        f.write("\\end{table}\n")
 
-        for contact in [0, 1]:
-            data = df_dyads[
-                (df_dyads["contact"] == contact) & (df_dyads["delta_f"] < max_delta_f)
-            ]
-            values_gsi = data["gsi"]
-            values_coherence = data["coherence"]
 
-            # remove NaNs
-            values_gsi = values_gsi[~np.isnan(values_gsi)]
-            values_coherence = values_coherence[~np.isnan(values_coherence)]
-
-            if contact == 0:
-                f.write(
-                    f"{plot_data['contact'][contact]['label']} & "
-                    f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & \\multirow{{2}}{{*}}{{${get_formatted_p_value(p_val_gsi)}$}} &"
-                    f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\multirow{{2}}{{*}}{{${get_formatted_p_value(p_val_coherence)}$}}  \\\\\n"
-                )
-            else:
-                f.write(
-                    f"{plot_data['contact'][contact]['label']} & "
-                    f"${np.mean(values_gsi):.2f} \\pm {np.std(values_gsi):.2f}$ & &"
-                    f"${np.mean(values_coherence):.2f} \\pm {np.std(values_coherence):.2f}$ & \\\\\n"
-                )
-
+def make_table_coherence_contact(df_dyads):
+    with open("../data/tables/dyads/coherence_contact.tex", "w") as f:
+        f.write("\\begin{table}\n")
+        f.write("\\centering\n")
+        f.write(
+            "\\caption{Coherence for different levels of contact. Student's $t$-test $p$-values for the difference between the levels of contact are also shown.}\n"
+        )
+        f.write("\\label{tab:coherence_contact}\n")
+        f.write("\\begin{tabular}{lcc}\n")
+        f.write("\\toprule\n")
+        f.write("Contact state & CWC (Mean $\\pm$ SD) & $p$-value \\\\ \n")
         f.write("\\midrule\n")
 
-        # baseline-values
-        values_gsi_baseline_1 = df_dyads[
-            (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
-        ]["gsi"]
-        values_gsi_baseline_2 = df_dyads[
-            (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
-        ]["gsi"]
-        values_coherence_baseline_1 = df_dyads[
-            (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
-        ]["coherence"]
-        values_coherence_baseline_2 = df_dyads[
-            (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
-        ]["coherence"]
+        all_values_coherence = []
 
-        # remove NaNs
-        values_gsi_baseline_1 = values_gsi_baseline_1[~np.isnan(values_gsi_baseline_1)]
-        values_gsi_baseline_2 = values_gsi_baseline_2[~np.isnan(values_gsi_baseline_2)]
-        values_coherence_baseline_1 = values_coherence_baseline_1[
-            ~np.isnan(values_coherence_baseline_1)
-        ]
-        values_coherence_baseline_2 = values_coherence_baseline_2[
-            ~np.isnan(values_coherence_baseline_2)
-        ]
+        for contact in [0, 1]:
+            values_coherence = df_dyads[(df_dyads["contact"] == contact)][
+                "coherence"
+            ].dropna()
+            all_values_coherence.append(values_coherence)
 
-        f.write(
-            f"$B_r$ & "
-            f"${np.mean(values_gsi_baseline_1):.2f} \\pm {np.std(values_gsi_baseline_1):.2f}$ & & "
-            f"${np.mean(values_coherence_baseline_1):.2f} \\pm {np.std(values_coherence_baseline_1):.2f}$ & \\\\\n"
-        )
+            f.write(
+                f"{DYADS_PARAMETERS['contact'][contact]['label']} & "
+                f"${values_coherence.mean():.2f} \pm {values_coherence.std():.2f}$ & "
+                f"\\\\ \n"
+            )
 
-        f.write(
-            f"$B_c$ & "
-            f"${np.mean(values_gsi_baseline_2):.2f} \\pm {np.std(values_gsi_baseline_2):.2f}$ & & "
-            f"${np.mean(values_coherence_baseline_2):.2f} \\pm {np.std(values_coherence_baseline_2):.2f}$ & \\\\\n"
-        )
-
+        _, p_val_coherence = ttest_ind(*all_values_coherence)
+        f.write(f"\\midrule\n")
+        f.write(f"p-value & & ${get_formatted_p_value(p_val_coherence)}$ \\\\ \n")
         f.write("\\bottomrule\n")
         f.write("\\end{tabular}\n")
         f.write("\\end{table}\n")
@@ -470,7 +435,7 @@ def make_tukey_table(df_dyads):
         for interaction in interactions_with_baseline:
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
             values_gsi = data["gsi"]
             values_coherence = data["coherence"]
@@ -499,7 +464,7 @@ def make_tukey_table(df_dyads):
         f.write("\\midrule\n")
         for i, interaction_i in enumerate(interactions_with_baseline):
             f.write(
-                f"{plot_data['interaction'][interaction_i]['label']} & "
+                f"{DYADS_PARAMETERS['interaction'][interaction_i]['label']} & "
                 + " & ".join(
                     [
                         (
@@ -531,7 +496,7 @@ def make_tukey_table(df_dyads):
 
         for i, interaction_i in enumerate(interactions_with_baseline):
             f.write(
-                f"{plot_data['interaction'][interaction_i]['label']} & "
+                f"{DYADS_PARAMETERS['interaction'][interaction_i]['label']} & "
                 + " & ".join(
                     [
                         (
@@ -567,7 +532,7 @@ def make_relative_phase_table(df_dyads):
 
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
             values_phase = data["relative_phase"]
 
@@ -578,7 +543,7 @@ def make_relative_phase_table(df_dyads):
             var_phase = circvar(values_phase, high=np.pi, low=-np.pi)  # type: ignore
 
             f.write(
-                f"{plot_data['interaction'][interaction]['label']} & "
+                f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                 f"${mean_phase:.2f}$ & "
                 f"${var_phase:.2f}$ \\\\\n"
             )
@@ -632,12 +597,12 @@ def make_table_delta_f(df_dyads):
 
             if interaction == 0:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} &"
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} &"
                     f"${mean_delta_f:.2f} \\pm {ste_delta_f:.2f}$  & \\multirow{{4}}{{*}}{{${get_formatted_p_value(p_val_dyads)}$}} \\\\\n"
                 )
             else:
                 f.write(
-                    f"{plot_data['interaction'][interaction]['label']} &"
+                    f"{DYADS_PARAMETERS['interaction'][interaction]['label']} &"
                     f"${mean_delta_f:.2f} \\pm {ste_delta_f:.2f}$ & \\\\\n"
                 )
 
@@ -693,7 +658,7 @@ def make_table_counts_dyads_interaction(df_dyads):
             data = df_dyads[(df_dyads["interaction"] == interaction)]
 
             f.write(
-                f"{plot_data['interaction'][interaction]['label']} & "
+                f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                 f"{len(data)} \\\\\n"
             )
 
@@ -720,7 +685,8 @@ def make_table_counts_dyads_contact(df_dyads):
             data = df_dyads[(df_dyads["contact"] == contact)]
 
             f.write(
-                f"{plot_data['contact'][contact]['label']} & " f"{len(data)} \\\\\n"
+                f"{DYADS_PARAMETERS['contact'][contact]['label']} & "
+                f"{len(data)} \\\\\n"
             )
 
         f.write("\\bottomrule\n")
@@ -734,7 +700,7 @@ def make_ssmd_table(df_dyads, metric, double=False, positive=False):
     for interaction in interactions_with_baseline:
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
+            & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
         if double:
             values = np.concatenate([data[metric + "_1"], data[metric + "_2"]])
@@ -763,7 +729,7 @@ def make_ssmd_table(df_dyads, metric, double=False, positive=False):
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
-            f"\\caption{{SSMD for pairwise comparisons of the {plot_data['metrics'][metric]['table_label']} the baselines and dyads with different intensities of interaction.}}\n"
+            f"\\caption{{SSMD for pairwise comparisons of the {DYADS_PARAMETERS['metrics'][metric]['table_label']} the baselines and dyads with different intensities of interaction.}}\n"
         )
         f.write(f"\\label{{tab:ssmd_{metric}}}\n")
         f.write("\\begin{tabular}{lcccccc}\n")
@@ -772,7 +738,7 @@ def make_ssmd_table(df_dyads, metric, double=False, positive=False):
             " & ".join(
                 [""]
                 + [
-                    plot_data["interaction"][i]["short_label"]
+                    DYADS_PARAMETERS["interaction"][i]["short_label"]
                     for i in interactions_with_baseline
                 ]
             )
@@ -781,7 +747,7 @@ def make_ssmd_table(df_dyads, metric, double=False, positive=False):
         f.write("\\midrule\n")
         for i, interaction_i in enumerate(interactions_with_baseline):
             f.write(
-                f"{plot_data['interaction'][interaction_i]['short_label']} & "
+                f"{DYADS_PARAMETERS['interaction'][interaction_i]['short_label']} & "
                 + " & ".join(
                     [
                         (
@@ -804,7 +770,7 @@ def make_dunn_table(df_dyads, metric, double=False, positive=False):
     for interaction in interactions_with_baseline:
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
+            & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
         if double:
             values = np.concatenate([data[metric + "_1"], data[metric + "_2"]])
@@ -827,7 +793,7 @@ def make_dunn_table(df_dyads, metric, double=False, positive=False):
         f.write("\\begin{table}\n")
         f.write("\\centering\n")
         f.write(
-            f"\\caption{{Dunn post-hoc test for pairwise comparisons of the {plot_data['metrics'][metric]['table_label']} between baseline pairs of $B_r$ and $B_c$ as well as different intensities of interaction. The $p$-values are adjusted using the Bonferroni correction.}}\n"
+            f"\\caption{{Dunn post-hoc test for pairwise comparisons of the {DYADS_PARAMETERS['metrics'][metric]['table_label']} between baseline pairs of $B_r$ and $B_c$ as well as different intensities of interaction. The $p$-values are adjusted using the Bonferroni correction.}}\n"
         )
         f.write(f"\\label{{tab:dunn_{metric}}}\n")
         f.write("\\begin{tabular}{lcccccc}\n")
@@ -836,7 +802,7 @@ def make_dunn_table(df_dyads, metric, double=False, positive=False):
             " & ".join(
                 [""]
                 + [
-                    plot_data["interaction"][i]["short_label"]
+                    DYADS_PARAMETERS["interaction"][i]["short_label"]
                     for i in interactions_with_baseline
                 ]
             )
@@ -845,7 +811,7 @@ def make_dunn_table(df_dyads, metric, double=False, positive=False):
         f.write("\\midrule\n")
         for i, interaction_i in enumerate(interactions_with_baseline):
             f.write(
-                f"{plot_data['interaction'][interaction_i]['short_label']} & "
+                f"{DYADS_PARAMETERS['interaction'][interaction_i]['short_label']} & "
                 + " & ".join(
                     [
                         (
@@ -902,7 +868,7 @@ def make_table_pearson_correlation(df_dyads, df_individuals):
             r_lv, _ = pearsonr(length, vel)
 
             f.write(
-                f"{plot_data['interaction'][interaction]['label']} & "
+                f"{DYADS_PARAMETERS['interaction'][interaction]['label']} & "
                 f"${r_fv:.2f}$ & "
                 f"${r_lv:.2f}$ \\\\\n"
             )
@@ -959,94 +925,8 @@ if __name__ == "__main__":
     interactions = [0, 1, 2, 3]
     interactions_with_baseline = [4, 5, 0, 1, 2, 3]
     interactions_with_close_baseline = [5, 0, 1, 2, 3]
-    plot_data = {
-        "interaction": {
-            0: {
-                "color": "blue",
-                "label": "Interaction 0",
-                "marker": "o",
-                "short_label": "0",
-            },
-            1: {
-                "color": "red",
-                "label": "Interaction 1",
-                "marker": "s",
-                "short_label": "1",
-            },
-            2: {
-                "color": "green",
-                "label": "Interaction 2",
-                "marker": "D",
-                "short_label": "2",
-            },
-            3: {
-                "color": "orange",
-                "label": "Interaction 3",
-                "marker": "^",
-                "short_label": "3",
-            },
-            4: {
-                "color": "gray",
-                "label": "$B_r$",
-                "marker": None,
-                "short_label": "$B_r$",
-            },
-            5: {
-                "color": "indigo",
-                "label": "$B_c$",
-                "marker": None,
-                "short_label": "$B_c$",
-            },
-        },
-        "contact": {
-            0: {"color": "blue", "label": "No contact", "marker": "o"},
-            1: {"color": "red", "label": "Contact", "marker": "s"},
-            2: {"color": "purple", "label": "Baseline", "marker": "x"},
-        },
-        "individual": {
-            "color": "turquoise",
-            "label": "Individuals",
-            "marker": "x",
-        },
-        "metrics": {
-            "gsi": {"label": "GSI", "limits": [0, 0.8], "table_label": "GSI"},
-            "coherence": {"label": "CWC", "limits": [0, 1], "table_label": "CWC"},
-            "delta_f": {
-                "label": "$\\Delta f$ [Hz]",
-                "limits": [0, 0.4],
-                "table_label": "difference in stride frequency $\\Delta f$",
-            },
-            "rec": {
-                "label": "\\%REC",
-                "limits": [0, 1],
-                "table_label": "percentage of recurrence $\\%\\text{REC}$",
-            },
-            "det": {
-                "label": "\\%DET",
-                "limits": [0.7, 1],
-                "table_label": "percentage of determinism $\\%\\text{DET}$",
-            },
-            "maxline": {
-                "label": "MAXLINE",
-                "limits": [0, 1],
-                "table_label": "maximal line length $\\text{MAXLINE}$ ",
-            },
-            "lyapunov": {
-                "label": "maximal Lyapunov exponent",
-                "limits": [200 * 10 ** (-3), 1],
-                "table_label": "maximal Lyapunov exponent $l_{lyap}$",
-            },
-            "determinism": {
-                "label": "Determinism",
-                "limits": [0.5, 1],
-                "table_label": "determinism $D$",
-            },
-        },
-    }
 
     ticks_baseline = [0, 1, 2, 3, 4, 5]
-
-    max_delta_f = 10  # maximum difference in frequency between the two pedestrians
 
     # increase the font size
     plt.rcParams.update({"font.size": 14})
@@ -1071,10 +951,10 @@ if __name__ == "__main__":
         ax[0].plot(
             bins,
             pdf,
-            label=plot_data["interaction"][interaction]["short_label"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
             linewidth=2,
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
+            marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
         )
 
     # add individuals
@@ -1085,10 +965,10 @@ if __name__ == "__main__":
     ax[0].plot(
         bins_individuals,
         pdf_individuals,
-        label=plot_data["individual"]["label"],
+        label=DYADS_PARAMETERS["individual"]["label"],
         linewidth=2,
-        marker=plot_data["individual"]["marker"],
-        color=plot_data["individual"]["color"],
+        marker=DYADS_PARAMETERS["individual"]["marker"],
+        color=DYADS_PARAMETERS["individual"]["color"],
     )
 
     ax[0].legend()
@@ -1126,10 +1006,10 @@ if __name__ == "__main__":
         ax[1].plot(
             bins,
             pdf,
-            label=plot_data["interaction"][interaction]["short_label"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
             linewidth=2,
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
+            marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
         )
 
     # add individuals
@@ -1140,10 +1020,10 @@ if __name__ == "__main__":
     ax[1].plot(
         bins_individuals,
         pdf_individuals,
-        label=plot_data["individual"]["label"],
+        label=DYADS_PARAMETERS["individual"]["label"],
         linewidth=2,
-        marker=plot_data["individual"]["marker"],
-        color=plot_data["individual"]["color"],
+        marker=DYADS_PARAMETERS["individual"]["marker"],
+        color=DYADS_PARAMETERS["individual"]["color"],
     )
 
     ax[1].legend()
@@ -1172,10 +1052,10 @@ if __name__ == "__main__":
         ax[2].plot(
             bins,
             pdf,
-            label=plot_data["interaction"][interaction]["short_label"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
             linewidth=2,
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
+            marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
         )
 
     # add individuals
@@ -1186,10 +1066,10 @@ if __name__ == "__main__":
     ax[2].plot(
         bins_individuals,
         pdf_individuals,
-        label=plot_data["individual"]["label"],
+        label=DYADS_PARAMETERS["individual"]["label"],
         linewidth=2,
-        marker=plot_data["individual"]["marker"],
-        color=plot_data["individual"]["color"],
+        marker=DYADS_PARAMETERS["individual"]["marker"],
+        color=DYADS_PARAMETERS["individual"]["color"],
     )
 
     ax[2].legend()
@@ -1224,9 +1104,9 @@ if __name__ == "__main__":
         ax[0].scatter(
             v,
             f,
-            label=plot_data["interaction"][interaction]["short_label"],
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
+            marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
             alpha=0.7,
             # linewidth=0.3,
             # edgecolor="black",
@@ -1236,7 +1116,7 @@ if __name__ == "__main__":
         ax[0].plot(
             np.linspace(0, 3, 100),
             fit_f(np.linspace(0, 3, 100), *popt),
-            color=plot_data["interaction"][interaction]["color"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
             linestyle="--",
             linewidth=2,
         )
@@ -1267,9 +1147,9 @@ if __name__ == "__main__":
         ax[1].scatter(
             v,
             l,
-            label=plot_data["interaction"][interaction]["short_label"],
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
+            marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
             alpha=0.7,
             # linewidth=0.3,
             # edgecolor="black",
@@ -1279,7 +1159,7 @@ if __name__ == "__main__":
         ax[1].plot(
             np.linspace(0, 3, 100),
             fit_f(np.linspace(0, 3, 100), *popt),
-            color=plot_data["interaction"][interaction]["color"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
             linestyle="--",
             linewidth=2,
         )
@@ -1334,7 +1214,7 @@ if __name__ == "__main__":
 
             return [p, marker]
 
-    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+    fig, ax = plt.subplots(figsize=(6, 4))
 
     ellipses = []
 
@@ -1386,8 +1266,8 @@ if __name__ == "__main__":
             width=ell_radius_x * 2,
             height=ell_radius_y * 2,
             facecolor="none",
-            edgecolor=plot_data["interaction"][interaction]["color"],
-            label=plot_data["interaction"][interaction]["short_label"],
+            edgecolor=DYADS_PARAMETERS["interaction"][interaction]["color"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
         )
 
         scale_x = np.sqrt(covariance[0, 0] * chisquare_val)
@@ -1401,35 +1281,35 @@ if __name__ == "__main__":
             .scale(scale_x, scale_y)
             .translate(mean_x, mean_y)  # type: ignore
         )
-        ellipse.set_transform(transf + ax[0].transData)
-        ax[0].add_patch(ellipse)
+        ellipse.set_transform(transf + ax.transData)
+        ax.add_patch(ellipse)
 
         ellipses.append(ellipse)
 
         if interaction <= 3:
-            ax[0].scatter(
+            ax.scatter(
                 f1,
                 f2,
-                marker=plot_data["interaction"][interaction]["marker"],  # type: ignore
-                color=plot_data["interaction"][interaction]["color"],
+                marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],  # type: ignore
+                color=DYADS_PARAMETERS["interaction"][interaction]["color"],
                 alpha=0.7,
                 linewidth=0,
                 s=8,
             )
 
     # plot the diagonal
-    ax[0].plot([0, 1.6], [0, 1.6], color="black", linestyle="--")
+    ax.plot([0, 1.6], [0, 1.6], color="black", linestyle="--")
 
-    ax[0].legend(
+    ax.legend(
         ellipses,
         [
-            plot_data["interaction"][i]["short_label"]
+            DYADS_PARAMETERS["interaction"][i]["short_label"]
             for i in interactions_with_baseline
         ],
         handler_map={
             Ellipse: HandlerEllipse(
                 markers={
-                    plot_data["interaction"][i]["short_label"]: plot_data[
+                    DYADS_PARAMETERS["interaction"][i]["short_label"]: DYADS_PARAMETERS[
                         "interaction"
                     ][i]["marker"]
                     for i in interactions_with_baseline
@@ -1440,17 +1320,23 @@ if __name__ == "__main__":
     )
 
     # ax[0].legend(markerscale=3)
-    ax[0].set_xlabel("$f_i$ [Hz]")
-    ax[0].set_ylabel("$f_j$ [Hz]")
-    ax[0].grid(color="lightgray", linestyle="--")
-    ax[0].set_aspect("equal")
-    ax[0].set_xlim(0.5, 2.2)
-    ax[0].set_ylim(0.5, 2)
-    ax[0].set_title("(a)", y=-0.35)
+    ax.set_xlabel("$f_i$ [Hz]")
+    ax.set_ylabel("$f_j$ [Hz]")
+    ax.grid(color="lightgray", linestyle="--")
+    ax.set_aspect("equal")
+    ax.set_xlim(0.5, 2.2)
+    ax.set_ylim(0.5, 2)
+    # ax.set_title("(a)", y=-0.35)
+
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig("../data/figures/dyads/frequency_analysis_f1_f2.pdf")
 
     # =============================================================================
     # Delta f vs. interaction
     # =============================================================================
+
+    fig, ax = plt.subplots(figsize=(6, 4))
 
     values_for_p_values = []
     means = []
@@ -1458,7 +1344,7 @@ if __name__ == "__main__":
 
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            # & (df_dyads["delta_f"] < max_delta_f)
+            # & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
 
         delta_f = np.array(data["delta_f"])
@@ -1475,22 +1361,25 @@ if __name__ == "__main__":
 
         means.append(mean_delta_f)
 
-        ax[1].bar(
+        ax.bar(
             i,
             mean_delta_f,
             yerr=ste_delta_f,
-            color=plot_data["interaction"][interaction]["color"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
             capsize=5,
         )
 
-    ax[1].set_xlabel("Intensity of interaction and baselines")
-    ax[1].set_ylabel("$\\Delta f$ [Hz]")
-    ax[1].set_xticks(ticks_baseline)
-    ax[1].set_xticklabels(
-        [plot_data["interaction"][i]["short_label"] for i in interactions_with_baseline]
+    # ax.set_xlabel("Intensity of interaction and baselines")
+    ax.set_ylabel("$\\Delta f$ [Hz]")
+    ax.set_xticks(ticks_baseline)
+    ax.set_xticklabels(
+        [
+            DYADS_PARAMETERS["interaction"][i]["short_label"]
+            for i in interactions_with_baseline
+        ]
     )
-    ax[1].grid(color="lightgray", linestyle="--")
-    ax[1].set_title("(b)", y=-0.35)
+    ax.grid(color="lightgray", linestyle="--")
+    # ax.set_title("(b)", y=-0.35)
 
     # add p-values
     _, p_val = kruskal(*values_for_p_values)
@@ -1509,8 +1398,8 @@ if __name__ == "__main__":
     max_val = max(means)
     y = max_val * 1.1
     dh = max_val * 0.05
-    ax[1].plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-    ax[1].text(
+    ax.plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
+    ax.text(
         3.5,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val),
@@ -1520,13 +1409,13 @@ if __name__ == "__main__":
     )
 
     y = y + 6 * dh
-    ax[1].plot(
+    ax.plot(
         [0, 0, 3.5, 3.5],
         [y, y + dh, y + dh, y],
         color="gray",
         linewidth=1.5,
     )
-    ax[1].text(
+    ax.text(
         (0 + 3.5) / 2,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_baseline_br),
@@ -1536,13 +1425,13 @@ if __name__ == "__main__":
     )
 
     y = y + 6 * dh
-    ax[1].plot(
+    ax.plot(
         [1, 1, 3.5, 3.5],
         [y, y + dh, y + dh, y],
         color="gray",
         linewidth=1.5,
     )
-    ax[1].text(
+    ax.text(
         (1 + 3.5) / 2,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_baseline_bc),
@@ -1551,11 +1440,14 @@ if __name__ == "__main__":
         color="gray",
     )
 
-    ax[1].set_ylim(0, float(y) + 8 * dh)
+    ax.set_ylim(0, float(y) + 8 * dh)
+
+    # remove ticks
+    ax.tick_params(bottom=False, left=False, right=False, top=False, which="both")
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/dyads/frequency_analysis.pdf")
+    plt.savefig("../data/figures/dyads/frequency_analysis_delta_f.pdf")
     plt.close()
 
     # =============================================================================
@@ -1570,7 +1462,7 @@ if __name__ == "__main__":
 
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
 
             values_metric = data[metric]
@@ -1591,17 +1483,17 @@ if __name__ == "__main__":
                 j,
                 mean_metric,
                 yerr=ste_metric,
-                color=plot_data["interaction"][interaction]["color"],
+                color=DYADS_PARAMETERS["interaction"][interaction]["color"],
                 capsize=5,
             )
 
-        ax.set_xlabel("Intensity of interaction and baselines")
-        ax.set_ylabel(plot_data["metrics"][metric]["label"])
+        # ax.set_xlabel("Intensity of interaction and baselines")
+        ax.set_ylabel(DYADS_PARAMETERS["metrics"][metric]["label"])
         ax.grid(color="lightgray", linestyle="--")
         ax.set_xticks(ticks_baseline)
         ax.set_xticklabels(
             [
-                plot_data["interaction"][i]["short_label"]
+                DYADS_PARAMETERS["interaction"][i]["short_label"]
                 for i in interactions_with_baseline
             ]
         )
@@ -1667,6 +1559,9 @@ if __name__ == "__main__":
 
         ax.set_ylim(0, float(y) + 8 * dh)
 
+        # remove ticks
+        ax.tick_params(bottom=False, left=False, right=False, top=False, which="both")
+
         plt.tight_layout()
         # plt.show()
         plt.savefig(f"../data/figures/dyads/bar_plot_{metric}_interaction.pdf")
@@ -1676,13 +1571,13 @@ if __name__ == "__main__":
     # Polar histograms of the relative phase
     # =============================================================================
 
-    fig, ax = plt.subplots(1, 6, figsize=(20, 4), subplot_kw={"projection": "polar"})
-
     for i, interaction in enumerate(interactions_with_baseline):
+
+        fig, ax = plt.subplots(figsize=(5, 4), subplot_kw={"projection": "polar"})
 
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
+            & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
 
         values_phase = data["relative_phase"]
@@ -1692,41 +1587,44 @@ if __name__ == "__main__":
 
         mean_phase = circmean(values_phase, high=np.pi, low=-np.pi)  # type: ignore
 
-        ax[i].hist(
+        ax.hist(
             values_phase,
             bins=64,
             density=True,
-            color=plot_data["interaction"][interaction]["color"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
         )
         # show the mean
-        ax[i].plot(
+        ax.plot(
             [mean_phase, mean_phase],
             [0, 1],
             color="black",
             linestyle="--",
             linewidth=2,
         )
-        ax[i].set_title(plot_data["interaction"][interaction]["short_label"])
-        ax[i].set_xticks(np.array([-135, -90, -45, 0, 45, 90, 135, 180]) / 180 * np.pi)
-        ax[i].set_ylim(0, 1)
-        ax[i].set_thetalim(-np.pi, np.pi)
+        # ax.set_title(DYADS_PARAMETERS["interaction"][interaction]["short_label"], y=1.1)
+        ax.set_xticks(np.array([-135, -90, -45, 0, 45, 90, 135, 180]) / 180 * np.pi)
+        ax.set_ylim(0, 1)
+        ax.set_thetalim(-np.pi, np.pi)
 
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig("../data/figures/dyads/polar_hist_relative_phase.pdf")
-    plt.close()
+        plt.tight_layout()
+        # plt.show()
+        plt.savefig(
+            f"../data/figures/dyads/polar_no_title/polar_hist_relative_phase_{interaction}.pdf"
+        )
+        plt.close()
 
     # =============================================================================
     # GSI wrt contact
     # =============================================================================
-    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
 
-    for i, (metric, label) in enumerate(zip(["gsi", "coherence"], ["(a)", "(b)"])):
+    for metric in ["gsi", "coherence"]:
+
+        fig, ax = plt.subplots(figsize=(6, 4))
 
         for j, contact in enumerate([0, 1]):
 
             data = df_dyads[
-                (df_dyads["contact"] == contact) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["contact"] == contact) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
 
             values_metric = data[metric]
@@ -1735,11 +1633,11 @@ if __name__ == "__main__":
             std_metric = np.std(values_metric)
             ste_metric = std_metric / np.sqrt(len(values_metric))
 
-            ax[i].bar(
+            ax.bar(
                 j,
                 mean_metric,
                 yerr=ste_metric,
-                color=plot_data["contact"][contact]["color"],
+                color=DYADS_PARAMETERS["contact"][contact]["color"],
                 capsize=5,
             )
 
@@ -1748,7 +1646,7 @@ if __name__ == "__main__":
 
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
 
             values_metric = data[metric]
@@ -1757,11 +1655,11 @@ if __name__ == "__main__":
             std_metric = np.std(values_metric)
             ste_metric = std_metric / np.sqrt(len(values_metric))
 
-            ax[i].bar(
+            ax.bar(
                 j + 2,
                 mean_metric,
                 yerr=ste_metric,
-                color=plot_data["interaction"][interaction]["color"],
+                color=DYADS_PARAMETERS["interaction"][interaction]["color"],
                 capsize=5,
             )
 
@@ -1782,8 +1680,8 @@ if __name__ == "__main__":
         max_val = max(np.mean(data_contact_0), np.mean(data_contact_1))
         y = max_val * 1.2
         dh = max_val * 0.05
-        ax[i].plot([0, 0, 1, 1], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-        ax[i].text(
+        ax.plot([0, 0, 1, 1], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
+        ax.text(
             0.5,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val),
@@ -1791,19 +1689,18 @@ if __name__ == "__main__":
             va="center",
             color="gray",
         )
-        ax[i].set_ylim(0, float(y) + 8 * dh)
+        ax.set_ylim(0, float(y) + 8 * dh)
 
-        ax[i].set_xlabel("Contact state and baselines")
-        ax[i].set_ylabel(plot_data["metrics"][metric]["label"])
-        ax[i].grid(color="lightgray", linestyle="--")
-        ax[i].set_xticks([0, 1, 2, 3])
-        ax[i].set_xticklabels(["No contact", "Contact", "$B_r$", "$B_c$"])
-        ax[i].set_title(label, y=-0.35)
+        ax.set_xlabel("Contact state and baselines")
+        ax.set_ylabel(DYADS_PARAMETERS["metrics"][metric]["label"])
+        ax.grid(color="lightgray", linestyle="--")
+        ax.set_xticks([0, 1, 2, 3])
+        ax.set_xticklabels(["No contact", "Contact", "$B_r$", "$B_c$"])
 
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig("../data/figures/dyads/bar_plot_gsi_coherence_contact.pdf")
-    plt.close()
+        plt.tight_layout()
+        # plt.show()
+        plt.savefig(f"../data/figures/dyads/bar_plot_{metric}_contact.pdf")
+        plt.close()
 
     # =============================================================================
     # DISTANCE ANALYSIS
@@ -1813,14 +1710,14 @@ if __name__ == "__main__":
     # Coherence vs. distance (all)
     # =============================================================================
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 4))
+    fig, axes = plt.subplots(figsize=(6, 3.5))
 
     n_bins = 8
     distance_min = 0.6
     distance_max = 2
 
     data = df_dyads[
-        (df_dyads["delta_f"] < max_delta_f) & (df_dyads["interaction"] != 4)
+        (df_dyads["delta_f"] < MAX_DELTA_F) & (df_dyads["interaction"] != 4)
     ]
 
     bin_centers, means, stds, errors, n_values = compute_binned_values(
@@ -1831,25 +1728,31 @@ if __name__ == "__main__":
         n_bins,
     )
 
-    axes[0].errorbar(
+    axes.errorbar(
         bin_centers,
         means,
         yerr=errors,
         linewidth=2,
-        color=plot_data["interaction"][4]["color"],
+        color=DYADS_PARAMETERS["interaction"][4]["color"],
         capsize=2,
-        marker=plot_data["interaction"][4]["marker"],
+        marker=DYADS_PARAMETERS["interaction"][4]["marker"],
     )
 
-    axes[0].set_xlabel("$\\delta$ [m]")
-    axes[0].set_ylabel("CWC")
-    axes[0].grid(color="lightgray", linestyle="--")
-    axes[0].set_xlim(0.5, 2)
-    axes[0].set_title("(a)", y=-0.35)
+    axes.set_xlabel("$\\delta$ [m]")
+    axes.set_ylabel("CWC")
+    axes.grid(color="lightgray", linestyle="--")
+    axes.set_xlim(0.5, 2)
+    # axes.set_title("(a)", y=-0.35)
+
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig("../data/figures/dyads/distance/coherence_distance_all.pdf")
 
     # =============================================================================
     # Distance vs. interaction
     # =============================================================================
+
+    fig, axes = plt.subplots(figsize=(6, 3.5))
 
     distance_min = 0.5
     distance_max = 2
@@ -1859,32 +1762,38 @@ if __name__ == "__main__":
 
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
+            & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
 
         pdf, bins = compute_pdf(
             data["interpersonal_distance"], distance_min, distance_max, n_bins
         )
 
-        axes[1].plot(
+        axes.plot(
             bins,
             pdf,
-            label=plot_data["interaction"][interaction]["short_label"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
             linewidth=2,
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
+            marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
         )
 
-    axes[1].legend()
-    axes[1].set_xlabel("$\\delta$ [m]")
-    axes[1].set_ylabel("$p(\\delta)$")
-    axes[1].grid(color="lightgray", linestyle="--")
-    axes[1].set_xlim(0.5, 2)
-    axes[1].set_title("(c)", y=-0.35)
+    axes.legend()
+    axes.set_xlabel("$\\delta$ [m]")
+    axes.set_ylabel("$p(\\delta)$")
+    axes.grid(color="lightgray", linestyle="--")
+    axes.set_xlim(0.5, 2)
+    # axes.set_title("(c)", y=-0.35)
+
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig("../data/figures/dyads/distance/distance_interaction.pdf")
 
     # =============================================================================
     # Coherence vs. distance (wrt interaction)
     # =============================================================================
+
+    fig, axes = plt.subplots(figsize=(6, 3.5))
 
     n_bins = 5
 
@@ -1892,7 +1801,7 @@ if __name__ == "__main__":
 
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
+            & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
 
         bin_centers, means, stds, errors, n_values = compute_binned_values(
@@ -1903,41 +1812,41 @@ if __name__ == "__main__":
             n_bins,
         )
 
-        axes[2].errorbar(
+        axes.errorbar(
             bin_centers,
             means,
             yerr=errors,
             linewidth=2,
-            marker=plot_data["interaction"][interaction]["marker"],
-            color=plot_data["interaction"][interaction]["color"],
-            label=plot_data["interaction"][interaction]["short_label"],
+            marker=DYADS_PARAMETERS["interaction"][interaction]["marker"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
+            label=DYADS_PARAMETERS["interaction"][interaction]["short_label"],
             capsize=2,
         )
 
-    axes[2].legend()
-    axes[2].set_xlabel("$\\delta$ [m]")
-    axes[2].set_ylabel("CWC")
-    axes[2].grid(color="lightgray", linestyle="--")
-    axes[2].set_xlim(0, 2)
-    axes[2].set_title("(e)", y=-0.35)
+    axes.legend()
+    axes.set_xlabel("$\\delta$ [m]")
+    axes.set_ylabel("CWC")
+    axes.grid(color="lightgray", linestyle="--")
+    axes.set_xlim(0, 2)
+    # axes.set_title("(e)", y=-0.35)
 
     plt.tight_layout()
     # plt.show()
-    plt.savefig("../data/figures/dyads/distance_analysis.pdf")
+    plt.savefig("../data/figures/dyads/distance/coherence_distance_interaction.pdf")
     plt.close()
-
-    fig, ax = plt.subplots(2, 3, figsize=(14, 7))
 
     # =============================================================================
     # Determism
     # =============================================================================
+
+    fig, ax = plt.subplots(figsize=(6, 3.5))
 
     values_for_p_values = []
     means = []
     for i, interaction in enumerate(interactions_with_baseline):
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
+            & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
 
         values_1 = data["determinism_1"]
@@ -1958,20 +1867,23 @@ if __name__ == "__main__":
 
         means.append(mean_det)
 
-        ax[0][0].bar(
+        ax.bar(
             i,
             mean_det,
             yerr=ste_det,
-            color=plot_data["interaction"][interaction]["color"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
             capsize=5,
         )
 
-    ax[0][0].set_xlabel("Intensity of interaction and baselines")
-    ax[0][0].set_ylabel("$D$")
-    ax[0][0].grid(color="lightgray", linestyle="--")
-    ax[0][0].set_xticks(ticks_baseline)
-    ax[0][0].set_xticklabels(
-        [plot_data["interaction"][i]["short_label"] for i in interactions_with_baseline]
+    # ax.set_xlabel("Intensity of interaction and baselines")
+    ax.set_ylabel("$D$")
+    ax.grid(color="lightgray", linestyle="--")
+    ax.set_xticks(ticks_baseline)
+    ax.set_xticklabels(
+        [
+            DYADS_PARAMETERS["interaction"][i]["short_label"]
+            for i in interactions_with_baseline
+        ]
     )
 
     # add p-values
@@ -1980,20 +1892,20 @@ if __name__ == "__main__":
     values_baseline_br = np.concatenate(
         [
             df_dyads[
-                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["determinism_1"],
             df_dyads[
-                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["determinism_2"],
         ]
     )
     values_baseline_bc = np.concatenate(
         [
             df_dyads[
-                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["determinism_1"],
             df_dyads[
-                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["determinism_2"],
         ]
     )
@@ -2009,10 +1921,10 @@ if __name__ == "__main__":
     # bracket for p-value
     max_val = max(means)
     y = max_val * 1.1
-    dh = (max_val - plot_data["metrics"]["determinism"]["limits"][0]) * 0.05
+    dh = (max_val - DYADS_PARAMETERS["metrics"]["determinism"]["limits"][0]) * 0.05
 
-    ax[0][0].plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-    ax[0][0].text(
+    ax.plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
+    ax.text(
         3.5,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_det),
@@ -2021,13 +1933,13 @@ if __name__ == "__main__":
         color="gray",
     )
     y = y + 6 * dh
-    ax[0][0].plot(
+    ax.plot(
         [0, 0, 3.5, 3.5],
         [y, y + dh, y + dh, y],
         color="gray",
         linewidth=1.5,
     )
-    ax[0][0].text(
+    ax.text(
         (0 + 3.5) / 2,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_baseline_br),
@@ -2037,13 +1949,13 @@ if __name__ == "__main__":
     )
 
     y = y + 6 * dh
-    ax[0][0].plot(
+    ax.plot(
         [1, 1, 3.5, 3.5],
         [y, y + dh, y + dh, y],
         color="gray",
         linewidth=1.5,
     )
-    ax[0][0].text(
+    ax.text(
         (1 + 3.5) / 2,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_baseline_bc),
@@ -2051,14 +1963,23 @@ if __name__ == "__main__":
         va="center",
         color="gray",
     )
-    ax[0][0].set_ylim(
-        plot_data["metrics"]["determinism"]["limits"][0], float(y) + 8 * dh
+    ax.set_ylim(
+        DYADS_PARAMETERS["metrics"]["determinism"]["limits"][0], float(y) + 8 * dh
     )
-    ax[0][0].set_title("(a)", y=-0.35)
+
+    # remove ticks
+    ax.tick_params(bottom=False, left=False, right=False, top=False, which="both")
+
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig("../data/figures/dyads/nonlinear_analysis/determinism.pdf")
+    plt.close()
 
     # =============================================================================
     # Lyapunov exponents
     # =============================================================================
+
+    fig, ax = plt.subplots(figsize=(6, 3.5))
 
     values_for_p_values = []
     means = []
@@ -2066,7 +1987,7 @@ if __name__ == "__main__":
 
         data = df_dyads[
             (df_dyads["interaction"] == interaction)
-            & (df_dyads["delta_f"] < max_delta_f)
+            & (df_dyads["delta_f"] < MAX_DELTA_F)
         ]
 
         values_1 = data["lyapunov_1"]
@@ -2089,30 +2010,33 @@ if __name__ == "__main__":
 
         means.append(mean_lyap)
 
-        ax[0][1].bar(
+        ax.bar(
             i,
             mean_lyap,
             yerr=ste_lyap,
-            color=plot_data["interaction"][interaction]["color"],
+            color=DYADS_PARAMETERS["interaction"][interaction]["color"],
             capsize=5,
         )
 
-    ax[0][1].set_xlabel("Intensity of interaction and baselines")
+    # ax.set_xlabel("Intensity of interaction and baselines")
 
     # needs asmath for \times
 
-    ax[0][1].set_ylabel("$l_{lyap}$ ($\\times 10^{-3}$)")
-    ax[0][1].grid(color="lightgray", linestyle="--")
-    ax[0][1].set_xticks(ticks_baseline)
-    ax[0][1].set_xticklabels(
-        [plot_data["interaction"][i]["short_label"] for i in interactions_with_baseline]
+    ax.set_ylabel("$l_{lyap}$ ($\\times 10^{-3}$)")
+    ax.grid(color="lightgray", linestyle="--")
+    ax.set_xticks(ticks_baseline)
+    ax.set_xticklabels(
+        [
+            DYADS_PARAMETERS["interaction"][i]["short_label"]
+            for i in interactions_with_baseline
+        ]
     )
 
     # format the axis to show only 1 decimal and put exponent in the axis label
     def scale_formatter(value, _):
         return f"{value * 1e3:.1f}"  # Multiply by 1e5 to scale
 
-    ax[0][1].yaxis.set_major_formatter(FuncFormatter(scale_formatter))
+    ax.yaxis.set_major_formatter(FuncFormatter(scale_formatter))
 
     # add p-values
     _, p_val_lyap = kruskal(*values_for_p_values)
@@ -2120,20 +2044,20 @@ if __name__ == "__main__":
     values_baseline_br = np.concatenate(
         [
             df_dyads[
-                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["lyapunov_1"],
             df_dyads[
-                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 4) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["lyapunov_2"],
         ]
     )
     values_baseline_bc = np.concatenate(
         [
             df_dyads[
-                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["lyapunov_1"],
             df_dyads[
-                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < max_delta_f)
+                (df_dyads["interaction"] == 5) & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]["lyapunov_2"],
         ]
     )
@@ -2149,9 +2073,9 @@ if __name__ == "__main__":
     # bracket for p-value
     max_val = max(means)
     y = max_val * 1.1
-    dh = (max_val - plot_data["metrics"]["lyapunov"]["limits"][0]) * 0.05
-    ax[0][1].plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-    ax[0][1].text(
+    dh = (max_val - DYADS_PARAMETERS["metrics"]["lyapunov"]["limits"][0]) * 0.05
+    ax.plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
+    ax.text(
         3.5,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_lyap),
@@ -2160,13 +2084,13 @@ if __name__ == "__main__":
         color="gray",
     )
     y = y + 6 * dh
-    ax[0][1].plot(
+    ax.plot(
         [0, 0, 3.5, 3.5],
         [y, y + dh, y + dh, y],
         color="gray",
         linewidth=1.5,
     )
-    ax[0][1].text(
+    ax.text(
         (0 + 3.5) / 2,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_baseline_br),
@@ -2176,13 +2100,13 @@ if __name__ == "__main__":
     )
 
     y = y + 6 * dh
-    ax[0][1].plot(
+    ax.plot(
         [1, 1, 3.5, 3.5],
         [y, y + dh, y + dh, y],
         color="gray",
         linewidth=1.5,
     )
-    ax[0][1].text(
+    ax.text(
         (1 + 3.5) / 2,
         float(y) + 4 * dh,
         get_formatted_p_value_stars(p_val_baseline_bc),
@@ -2190,31 +2114,33 @@ if __name__ == "__main__":
         va="center",
         color="gray",
     )
-    ax[0][1].set_ylim(plot_data["metrics"]["lyapunov"]["limits"][0], float(y) + 8 * dh)
-    ax[0][1].set_title("(b)", y=-0.35)
+    ax.set_ylim(DYADS_PARAMETERS["metrics"]["lyapunov"]["limits"][0], float(y) + 8 * dh)
+    # ax.set_title("(b)", y=-0.35)
+
+    # remove ticks
+    ax.tick_params(bottom=False, left=False, right=False, top=False, which="both")
+
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig("../data/figures/dyads/nonlinear_analysis/lyapunov.pdf")
+    plt.close()
 
     # =============================================================================
     # CRQ
     # =============================================================================
 
     # rec, det, maxline
-    for j, (label, metric) in enumerate(
-        zip(
-            [
-                "(c)",
-                "(d)",
-                "(e)",
-            ],
-            ["rec", "det", "maxline"],
-        )
-    ):
+    for j, metric in enumerate(["rec", "det", "maxline"]):
+
+        fig, ax = plt.subplots(figsize=(6, 3.5))
+
         values_for_p_values = []
         means = []
         for i, interaction in enumerate(interactions_with_baseline):
 
             data = df_dyads[
                 (df_dyads["interaction"] == interaction)
-                & (df_dyads["delta_f"] < max_delta_f)
+                & (df_dyads["delta_f"] < MAX_DELTA_F)
             ]
 
             values_metric = data[metric]
@@ -2231,25 +2157,24 @@ if __name__ == "__main__":
 
             means.append(mean_rec)
 
-            ax[1][j].bar(
+            ax.bar(
                 i,
                 mean_rec,
                 yerr=ste_rec,
-                color=plot_data["interaction"][interaction]["color"],
+                color=DYADS_PARAMETERS["interaction"][interaction]["color"],
                 capsize=5,
             )
 
-        ax[1][j].set_xlabel("Intensity of interaction and baselines")
-        ax[1][j].set_ylabel(plot_data["metrics"][metric]["label"])
-        ax[1][j].grid(color="lightgray", linestyle="--")
-        ax[1][j].set_xticks(ticks_baseline)
-        ax[1][j].set_xticklabels(
+        # ax.set_xlabel("Intensity of interaction and baselines")
+        ax.set_ylabel(DYADS_PARAMETERS["metrics"][metric]["label"])
+        ax.grid(color="lightgray", linestyle="--")
+        ax.set_xticks(ticks_baseline)
+        ax.set_xticklabels(
             [
-                plot_data["interaction"][i]["short_label"]
+                DYADS_PARAMETERS["interaction"][i]["short_label"]
                 for i in interactions_with_baseline
             ]
         )
-        ax[1][j].set_title(label, y=-0.35)
 
         # add p-values
         _, p_val_rec = kruskal(*values_for_p_values)
@@ -2257,10 +2182,10 @@ if __name__ == "__main__":
         max_val = max(means)
         y = max_val * 1.1
 
-        dh = (max_val - plot_data["metrics"][metric]["limits"][0]) * 0.05
+        dh = (max_val - DYADS_PARAMETERS["metrics"][metric]["limits"][0]) * 0.05
 
-        ax[1][j].plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
-        ax[1][j].text(
+        ax.plot([2, 2, 5, 5], [y, y + dh, y + dh, y], color="gray", linewidth=1.5)
+        ax.text(
             3.5,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val_rec),
@@ -2270,13 +2195,13 @@ if __name__ == "__main__":
         )
 
         y = y + 6 * dh
-        ax[1][j].plot(
+        ax.plot(
             [0, 0, 3.5, 3.5],
             [y, y + dh, y + dh, y],
             color="gray",
             linewidth=1.5,
         )
-        ax[1][j].text(
+        ax.text(
             (0 + 3.5) / 2,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val_baseline_br),
@@ -2286,13 +2211,13 @@ if __name__ == "__main__":
         )
 
         y = y + 6 * dh
-        ax[1][j].plot(
+        ax.plot(
             [1, 1, 3.5, 3.5],
             [y, y + dh, y + dh, y],
             color="gray",
             linewidth=1.5,
         )
-        ax[1][j].text(
+        ax.text(
             (1 + 3.5) / 2,
             float(y) + 4 * dh,
             get_formatted_p_value_stars(p_val_baseline_bc),
@@ -2301,18 +2226,24 @@ if __name__ == "__main__":
             color="gray",
         )
 
-        ax[1][j].set_ylim(plot_data["metrics"][metric]["limits"][0], float(y) + 8 * dh)
+        ax.set_ylim(DYADS_PARAMETERS["metrics"][metric]["limits"][0], float(y) + 8 * dh)
 
-    # remove the last subplot
-    fig.delaxes(ax[0][2])
+        # remove ticks
+        ax.tick_params(bottom=False, left=False, right=False, top=False, which="both")
 
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig("../data/figures/dyads/nonlinear_metrics.pdf")
+        plt.tight_layout()
+        # plt.show()
+        plt.savefig(f"../data/figures/dyads/nonlinear_analysis/{metric}.pdf")
+        plt.close()
 
     # =============================================================================
     # Prints
     # =============================================================================
+
+    print("Number of dyads:")
+    for interaction in interactions_with_baseline:
+        data = df_dyads[df_dyads["interaction"] == interaction]
+        print(f"Interaction {interaction}: {len(data)} dyads")
 
     # print count number of stationary samples
 
@@ -2344,7 +2275,8 @@ if __name__ == "__main__":
     make_table_gsi_interaction(df_dyads)
     make_table_coherence_interaction(df_dyads)
     make_tukey_table(df_dyads)
-    make_table_gsi_coherence_contact(df_dyads)
+    make_table_gsi_contact(df_dyads)
+    make_table_coherence_contact(df_dyads)
     make_table_pearson_correlation(df_dyads, df_individuals)
 
     make_dunn_table(df_dyads, "delta_f")

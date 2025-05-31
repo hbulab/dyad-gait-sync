@@ -58,7 +58,7 @@ if __name__ == "__main__":
     dt = []
 
     print("Computing for individuals")
-    for pedestrian in tqdm(individuals[:100]):
+    for pedestrian in tqdm(individuals):
 
         traj = pedestrian.get_trajectory()
 
